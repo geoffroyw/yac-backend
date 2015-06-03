@@ -33,3 +33,22 @@ build/
 
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
 .rvmrc
+
+# Ignore bundler config.
+/.bundle
+
+# Ignore the default SQLite database.
+/db/*.sqlite3
+/db/*.sqlite3-journal
+
+# Ignore all logfiles
+/log/*.log
+
+# Ignore DS_STORE
+.DS_STORE
+
+# Ignore RubyMine
+.idea
+
+# Database config
+/config/database.yml

@@ -1,0 +1,23 @@
+development:
+  adapter: mysql2
+  database: db_name_dev
+  username: username
+  password: password
+  host: localhost
+  socket: /tmp/mysql.sock
+
+test:
+  adapter: mysql2
+  database: db_name_test
+  username: username
+  password: password
+  host: localhost
+  socket: /tmp/mysql.sock
+
+production:
+  adapter: mysql2
+  database: db_name_production
+  username: username
+  password: password
+  host: localhost
+  socket: /tmp/mysql.sock
