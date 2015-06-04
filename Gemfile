@@ -13,12 +13,14 @@ gem 'mysql2'
 group :test do
   gem 'rspec-core', '3.2'
   gem 'rspec-expectations', '3.2'
-  gem 'rspec-rails', '3.2'
   gem 'factory_girl'
   gem 'shoulda-matchers', require: false
   gem 'factory_girl_rails', '~> 4.4.1'
 end
 
+group :development, :test do
+  gem 'rspec-rails', '3.2'
+end
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
