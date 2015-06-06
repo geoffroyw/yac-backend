@@ -39,6 +39,8 @@ GEM
     factory_girl_rails (4.4.1)
       factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
+    faker (1.4.3)
+      i18n (~> 0.5)
     i18n (0.7.0)
     json (1.8.3)
     mail (2.6.3)
@@ -103,9 +105,14 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+<<<<<<< HEAD
+  active_model_serializers (~> 0.9.3)
+=======
+>>>>>>> parent of 0497f6c... countries index controller
   annotate (~> 2.6.6)
   factory_girl
   factory_girl_rails (~> 4.4.1)
+  faker (~> 1.4.3)
   mysql2
   rails (= 4.1.7)
   rails-api
