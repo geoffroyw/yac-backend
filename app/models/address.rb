@@ -21,4 +21,5 @@ class Address < ActiveRecord::Base
   validates_presence_of :postal_code
   validates_presence_of :city
   validates_presence_of :country
+  validates_presence_of :customer
 end

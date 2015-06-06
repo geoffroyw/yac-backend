@@ -40,4 +40,8 @@ RSpec.describe Address, type: :model do
     it { should validate_presence_of(:city) }
   end
 
+  describe 'it should validates presence of customer' do
+    it { should validate_presence_of(:customer)}
+  end
+
 end
