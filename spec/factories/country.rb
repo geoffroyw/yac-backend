@@ -5,8 +5,8 @@ FactoryGirl.define do
     sequence :name do |n|
       "country#{n}"
     end
-    sequence :name do |n|
-      "country#{n}"
+    sequence :iso do |n|
+      "iso#{n}"
     end
   end
 end

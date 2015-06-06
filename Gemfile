@@ -7,12 +7,9 @@ gem 'rails-api'
 
 gem 'spring', :group => :development
 
-
-<<<<<<< HEAD
-gem 'active_model_serializers', '~> 0.9.3'
-=======
 gem 'mysql2'
->>>>>>> parent of 0497f6c... countries index controller
+
+gem 'active_model_serializers'
 
 group :test do
   gem 'rspec-core', '3.2'

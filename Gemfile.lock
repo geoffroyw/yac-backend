@@ -14,6 +14,8 @@ GEM
       activesupport (= 4.1.7)
       builder (~> 3.1)
       erubis (~> 2.7.0)
+    active_model_serializers (0.9.3)
+      activemodel (>= 3.2)
     activemodel (4.1.7)
       activesupport (= 4.1.7)
       builder (~> 3.1)
@@ -105,10 +107,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-<<<<<<< HEAD
-  active_model_serializers (~> 0.9.3)
-=======
->>>>>>> parent of 0497f6c... countries index controller
+  active_model_serializers
   annotate (~> 2.6.6)
   factory_girl
   factory_girl_rails (~> 4.4.1)

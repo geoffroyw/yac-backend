@@ -16,9 +16,9 @@ RSpec.describe CountriesController, type: :controller do
       # test for the 200 status-code
       expect(response).to be_success
 
-      response = JSON.parse(response.body)
+      r = JSON.parse(response.body)
 
-      expect(response['countries']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(expected_countries, each_serializer: CountrySerializer).to_json))
+      expect(r['countries']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(expected_countries, each_serializer: CountrySerializer).to_json))
 
 
     end
