@@ -57,4 +57,5 @@ Rails.application.routes.draw do
   resources :countries, only: [:index]
 
   resources :customers, only: [:index]
+
 end
