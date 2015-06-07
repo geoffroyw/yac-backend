@@ -11,4 +11,4 @@ env:
   - DB=mysql
 before_script:
   - cp config/database.travis.yml config/database.yml
-  - mysql -e 'create database yac_test;'
+  - mysql -e "create database IF NOT EXISTS yac_test;" -uroot
