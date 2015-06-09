@@ -1,27 +1,27 @@
 source 'https://rubygems.org'
 
 
-gem 'rails', '4.1.7'
+gem 'rails', '~>4.2'
 
-gem 'rails-api'
+gem 'rails-api', '~>0.4'
 
 gem 'spring', :group => :development
 
-gem 'mysql2'
+gem 'mysql2', '~>0.3'
 
 gem 'active_model_serializers'
 
 group :test do
-  gem 'rspec-core', '3.2'
-  gem 'rspec-expectations', '3.2'
-  gem 'factory_girl'
-  gem 'shoulda-matchers', require: false
-  gem 'factory_girl_rails', '~> 4.4.1'
-  gem 'faker', '~> 1.4.3'
+  gem 'rspec-core', '~>3.2'
+  gem 'rspec-expectations', '~>3.2'
+  gem 'factory_girl', '~> 4.5'
+  gem 'shoulda-matchers', '~>2.8', require: false
+  gem 'factory_girl_rails', '~> 4.5'
+  gem 'faker', '~> 1.4'
 end
 
 group :development, :test do
-  gem 'rspec-rails', '3.2'
+  gem 'rspec-rails', '~>3.2'
 end
 
 gem 'annotate', '~> 2.6.6', :group => :development
