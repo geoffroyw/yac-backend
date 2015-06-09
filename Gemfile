@@ -25,6 +25,7 @@ group :development, :test do
 end
 
 gem 'annotate', '~> 2.6.6', :group => :development
+gem 'coveralls', require: false
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
