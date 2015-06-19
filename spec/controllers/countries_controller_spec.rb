@@ -47,7 +47,7 @@ RSpec.describe CountriesController, type: :controller do
 
       context 'when the resource is not found' do
         it 'respond with 404' do
-          get :show, {:id => 2.to_s}
+          get :show, {:id => 2000000.to_s}
           expect(response).to be_not_found
         end
       end
