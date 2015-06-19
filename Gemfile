@@ -14,14 +14,15 @@ gem 'active_model_serializers'
 group :test do
   gem 'rspec-core', '~>3.2'
   gem 'rspec-expectations', '~>3.2'
-  gem 'factory_girl', '~> 4.5'
   gem 'shoulda-matchers', '~>2.8', require: false
-  gem 'factory_girl_rails', '~> 4.5'
-  gem 'faker', '~> 1.4'
 end
 
 group :development, :test do
   gem 'rspec-rails', '~>3.2'
+  gem 'factory_girl', '~> 4.5'
+  gem 'faker', '~> 1.4'
+  gem 'factory_girl_rails', '~> 4.5'
+  gem 'database_cleaner', '~> 1.4'
 end
 
 gem 'annotate', '~> 2.6.6', :group => :development

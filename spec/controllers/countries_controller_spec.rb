@@ -4,11 +4,11 @@ RSpec.describe CountriesController, type: :controller do
 
   describe 'Country API' do
     describe '#index' do
-      france = FactoryGirl.create :country, name: 'France'
-      usa = FactoryGirl.create :country, name: 'USA'
-      let(:expected_countries) {Country.all}
-
       before :each do
+        france = FactoryGirl.create :country, name: 'France'
+        usa = FactoryGirl.create :country, name: 'USA'
+        @expected_countries = [france, usa]
+
         get 'index'
       end
 
@@ -19,7 +19,7 @@ RSpec.describe CountriesController, type: :controller do
       it 'returns the corresponding entities' do
         r = JSON.parse(response.body)
 
-        expect(r['countries']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(expected_countries, each_serializer: CountrySerializer).to_json))
+        expect(r['countries']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(@expected_countries, each_serializer: CountrySerializer).to_json))
       end
     end
 
