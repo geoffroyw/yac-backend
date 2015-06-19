@@ -2,23 +2,24 @@ require 'rails_helper'
 
 RSpec.describe CustomersController, type: :controller do
   describe 'Customers API' do
-    it 'retrieves the list of customers' do
 
-      c1 = FactoryGirl.create :customer
-      c2 = FactoryGirl.create :customer
+    describe '#index' do
+      let(:expected_customers) {Customer.all}
 
-      expected_customers = [c1.reload, c2.reload]
+      before :each do
+        get :index
+      end
 
-      get 'index'
+      it 'responds with 200' do
+        expect(response).to be_success
+      end
 
+      it 'returns all the customers in JSON' do
+        body = JSON.parse(response.body)
 
-      # test for the 200 status-code
-      expect(response).to be_success
+        expect(body['customers']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(expected_customers).to_json))
 
-      body = JSON.parse(response.body)
-
-      expect(body['customers']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(expected_customers).to_json))
-
+      end
 
     end
   end
