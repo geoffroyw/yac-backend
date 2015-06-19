@@ -26,6 +26,16 @@ class CustomersController < ActionController::API
     end
   end
 
+  def update
+    customer = Customer.find params[:id]
+    if customer.update customer_params
+      render json: customer, serializer: CustomerSerializer, status: :ok
+    else
+      render json: {errors: customer.errors}, status: :bad_request
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: {error: 'Customer does not exist'}, status: :not_found
+  end
 
   private
 

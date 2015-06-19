@@ -85,5 +85,46 @@ RSpec.describe CustomersController, type: :controller do
         end
       end
     end
+
+    describe '#update' do
+      context 'when the entity does not exists' do
+        it 'responds with 404' do
+          put :update, {:id => 4.to_s}
+          expect(response).to be_not_found
+        end
+      end
+
+      context 'when the entity is found' do
+        let(:customer_to_be_updated) {FactoryGirl.create :customer}
+
+        context 'when the submitted parameters are not valid' do
+          it 'responds with 400' do
+            customer_to_be_updated.first_name = ''
+            put :update, {:id => customer_to_be_updated.id.to_s, :customer => customer_to_be_updated.attributes}
+            expect(response).to be_bad_request
+          end
+        end
+
+        context 'when the submitted parameters are valid' do
+          it 'responds with 200' do
+            customer_to_be_updated.first_name = 'NewName'
+            put :update, {:id => customer_to_be_updated.id.to_s, :customer => customer_to_be_updated.attributes}
+            expect(response).to be_ok
+          end
+
+          it 'updates the entity' do
+            customer_to_be_updated.first_name = 'NewName'
+            put :update, {:id => customer_to_be_updated.id.to_s, :customer => customer_to_be_updated.attributes}
+
+            customer_from_db = Customer.find(customer_to_be_updated.id)
+            expect(customer_from_db.first_name).to eq('NewName')
+          end
+        end
+
+
+      end
+
+
+    end
   end
 end
