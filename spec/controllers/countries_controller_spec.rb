@@ -4,6 +4,8 @@ RSpec.describe CountriesController, type: :controller do
 
   describe 'Country API' do
     describe '#index' do
+      france = FactoryGirl.create :country, name: 'France'
+      usa = FactoryGirl.create :country, name: 'USA'
       let(:expected_countries) {Country.all}
 
       before :each do
