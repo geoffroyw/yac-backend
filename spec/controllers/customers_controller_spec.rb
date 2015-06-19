@@ -67,7 +67,8 @@ RSpec.describe CustomersController, type: :controller do
         let(:submitted_customer) { FactoryGirl.build(:customer) }
 
         before :each do
-          post :create, {:customer => submitted_customer.attributes}
+          post :create, {:customer => FactoryGirl.attributes_for(:customer)
+                                          .merge(address_attributes: FactoryGirl.build(:address).attributes)}
         end
 
         it 'responds with 201' do
@@ -77,11 +78,19 @@ RSpec.describe CustomersController, type: :controller do
         it 'creates a customer with the given attributes values' do
           id = JSON.parse(response.body)['customer']['id']
 
+
           created_customer = Customer.find id
           expect(created_customer.first_name).to eq(submitted_customer.first_name)
           expect(created_customer.last_name).to eq(submitted_customer.last_name)
           expect(created_customer.email).to eq(submitted_customer.email)
           expect(created_customer.phone).to eq(submitted_customer.phone)
+          expect(created_customer.address).not_to be_nil
+          expect(created_customer.address.id).not_to be_nil
+          expect(created_customer.address.address).to eq(submitted_customer.address.address)
+          expect(created_customer.address.address2).to eq(submitted_customer.address.address2)
+          expect(created_customer.address.city).to eq(submitted_customer.address.city)
+          expect(created_customer.address.postal_code).to eq(submitted_customer.address.postal_code)
+          expect(created_customer.address.customer).to eq(created_customer)
         end
       end
     end
@@ -95,12 +104,13 @@ RSpec.describe CustomersController, type: :controller do
       end
 
       context 'when the entity is found' do
-        let(:customer_to_be_updated) {FactoryGirl.create :customer}
+        let(:customer_to_be_updated) { FactoryGirl.create :customer }
 
         context 'when the submitted parameters are not valid' do
           it 'responds with 400' do
             customer_to_be_updated.first_name = ''
-            put :update, {:id => customer_to_be_updated.id.to_s, :customer => customer_to_be_updated.attributes}
+            put :update, {:id => customer_to_be_updated.id.to_s,
+                          :customer => customer_to_be_updated.attributes}
             expect(response).to be_bad_request
           end
         end
@@ -108,19 +118,41 @@ RSpec.describe CustomersController, type: :controller do
         context 'when the submitted parameters are valid' do
           it 'responds with 200' do
             customer_to_be_updated.first_name = 'NewName'
-            put :update, {:id => customer_to_be_updated.id.to_s, :customer => customer_to_be_updated.attributes}
+            put :update, {:id => customer_to_be_updated.id.to_s,
+                          :customer => customer_to_be_updated.attributes}
             expect(response).to be_ok
           end
 
           it 'updates the entity' do
             customer_to_be_updated.first_name = 'NewName'
-            put :update, {:id => customer_to_be_updated.id.to_s, :customer => customer_to_be_updated.attributes}
+            put :update, {:id => customer_to_be_updated.id.to_s,
+                          :customer => customer_to_be_updated.attributes}
 
             customer_from_db = Customer.find(customer_to_be_updated.id)
             expect(customer_from_db.first_name).to eq('NewName')
           end
         end
 
+        context 'when the nested attributes are updated' do
+          it 'responds with 200' do
+            customer_to_be_updated.address.address2 = 'NewAddress2'
+            put :update, {:id => customer_to_be_updated.id.to_s,
+                          :customer => customer_to_be_updated.attributes
+                                           .merge(address_attributes: customer_to_be_updated.address.attributes)}
+            expect(response).to be_ok
+          end
+
+          it 'updates the nested entity' do
+            customer_to_be_updated.address.address2 = 'NewAddress2'
+            put :update, {:id => customer_to_be_updated.id.to_s,
+                          :customer => customer_to_be_updated.attributes
+                                           .merge(address_attributes: customer_to_be_updated.address.attributes)}
+
+            customer_from_db = Customer.find(customer_to_be_updated.id)
+            expect(customer_from_db.address.address2).to eq('NewAddress2')
+            expect(customer_from_db.address.customer.id).to eq(customer_to_be_updated.id)
+          end
+        end
 
       end
 

@@ -40,6 +40,9 @@ class CustomersController < ActionController::API
   private
 
   def customer_params
-    params.require(:customer).permit(:first_name, :last_name, :email, :phone)
+    params.require(:customer)
+        .permit(:first_name, :last_name, :email, :phone,
+                address_attributes: [:customer_id, :address, :address2, :postal_code, :city, :country_id]
+        )
   end
 end

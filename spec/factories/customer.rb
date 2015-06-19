@@ -6,5 +6,6 @@ FactoryGirl.define do
     last_name Faker::Name.last_name
     email Faker::Internet.safe_email
     phone Faker::PhoneNumber.phone_number
+    association :address, strategy: :build
   end
 end
