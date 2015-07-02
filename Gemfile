@@ -11,6 +11,8 @@ gem 'mysql2', '~>0.3'
 
 gem 'active_model_serializers', '~>0.9'
 
+gem 'paranoia', '~> 2.0'
+
 group :test do
   gem 'rspec-core', '~>3.2'
   gem 'rspec-expectations', '~>3.2'

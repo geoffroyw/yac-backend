@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150619190652) do
+ActiveRecord::Schema.define(version: 20150702172049) do
 
   create_table "addresses", force: :cascade do |t|
     t.string   "address",     limit: 255, null: false
@@ -30,7 +30,10 @@ ActiveRecord::Schema.define(version: 20150619190652) do
     t.text     "description", limit: 65535
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
+    t.datetime "deleted_at"
   end
+
+  add_index "apartment_apartments", ["deleted_at"], name: "index_apartment_apartments_on_deleted_at", using: :btree
 
   create_table "countries", force: :cascade do |t|
     t.string   "name",       limit: 255, null: false
