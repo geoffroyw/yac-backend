@@ -14,7 +14,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         expect(response).to be_success
       end
 
-      it 'returns all the customers in JSON' do
+      it 'returns all the apartments in JSON' do
         body = JSON.parse(response.body)
 
         expect(body['apartments']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(@expected_apartments).to_json))
@@ -37,12 +37,12 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
 
       it 'returns the apartment in JSON' do
         body = JSON.parse(response.body)
-        customer = body['apartment']
+        apartment = body['apartment']
 
-        expect(customer['id']).to eq(expected_apartment.id)
-        expect(customer['name']).to eq(expected_apartment.name)
-        expect(customer['capacity']).to eq(expected_apartment.capacity)
-        expect(customer['description']).to eq(expected_apartment.description)
+        expect(apartment['id']).to eq(expected_apartment.id)
+        expect(apartment['name']).to eq(expected_apartment.name)
+        expect(apartment['capacity']).to eq(expected_apartment.capacity)
+        expect(apartment['description']).to eq(expected_apartment.description)
       end
     end
 
@@ -82,6 +82,46 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         expect(created_apartment.capacity).to eq(submitted_apartment.capacity)
         expect(created_apartment.description).to eq(submitted_apartment.description)
 
+      end
+    end
+  end
+
+  describe '#update' do
+    context 'when the entity does not exists' do
+      it 'responds with 404' do
+        put :update, {:id => 4.to_s}
+        expect(response).to be_not_found
+      end
+    end
+
+    context 'when the entity is found' do
+      let(:apartment_to_be_updated) { FactoryGirl.create :apartment }
+
+      context 'when the submitted parameters are not valid' do
+        it 'responds with 400' do
+          apartment_to_be_updated.name = ''
+          put :update, {:id => apartment_to_be_updated.id.to_s,
+                        :apartment => apartment_to_be_updated.attributes}
+          expect(response).to be_bad_request
+        end
+      end
+
+      context 'when the submitted parameters are valid' do
+        it 'responds with 200' do
+          apartment_to_be_updated.name = 'NewName'
+          put :update, {:id => apartment_to_be_updated.id.to_s,
+                        :apartment => apartment_to_be_updated.attributes}
+          expect(response).to be_ok
+        end
+
+        it 'updates the entity' do
+          apartment_to_be_updated.name = 'NewName'
+          put :update, {:id => apartment_to_be_updated.id.to_s,
+                        :apartment => apartment_to_be_updated.attributes}
+
+          apartment_from_db = Apartment::Apartment.find(apartment_to_be_updated.id)
+          expect(apartment_from_db.name).to eq('NewName')
+        end
       end
     end
   end

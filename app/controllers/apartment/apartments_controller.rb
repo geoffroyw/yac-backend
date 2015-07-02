@@ -25,6 +25,16 @@ class Apartment::ApartmentsController < ApplicationController
     end
   end
 
+  def update
+    apartment = Apartment::Apartment.find params[:id]
+    if apartment.update apartment_params
+      render json: apartment, serializer: Apartment::ApartmentSerializer, status: :ok
+    else
+      render json: {errors: apartment.errors}, status: :bad_request
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: {error: 'Apartment does not exist'}, status: :not_found
+  end
 
   private
 
