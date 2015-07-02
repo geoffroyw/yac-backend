@@ -13,6 +13,6 @@ class Apartment::ApartmentsController < ApplicationController
       render json: apartment, serializer: Apartment::ApartmentSerializer
     end
   rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Country does not exist'}, status: :not_found
+    render json: {error: 'Apartment does not exist'}, status: :not_found
   end
 end
