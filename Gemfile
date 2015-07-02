@@ -9,7 +9,7 @@ gem 'spring', :group => :development
 
 gem 'mysql2', '~>0.3'
 
-gem 'active_model_serializers'
+gem 'active_model_serializers', '~>0.9'
 
 group :test do
   gem 'rspec-core', '~>3.2'
@@ -26,7 +26,7 @@ group :development, :test do
 end
 
 gem 'annotate', '~> 2.6.6', :group => :development
-gem 'coveralls', require: false
+gem 'coveralls', '~>0.8', require: false
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
