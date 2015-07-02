@@ -9,7 +9,7 @@ gem 'spring', :group => :development
 
 gem 'mysql2', '~>0.3'
 
-gem 'active_model_serializers'
+gem 'active_model_serializers', '~>0.9'
 
 group :test do
   gem 'rspec-core', '~>3.2'
