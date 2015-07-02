@@ -15,4 +15,21 @@ class Apartment::ApartmentsController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     render json: {error: 'Apartment does not exist'}, status: :not_found
   end
+
+  def create
+    apartment = Apartment::Apartment.new apartment_params
+    if apartment.save
+      render json: apartment, serializer: Apartment::ApartmentSerializer, status: :created
+    else
+      render json: {errors: apartment.errors}, status: :bad_request
+    end
+  end
+
+
+  private
+
+  def apartment_params
+    params.require(:apartment)
+        .permit(:name, :description, :capacity)
+  end
 end

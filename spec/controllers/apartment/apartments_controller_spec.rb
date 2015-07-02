@@ -54,5 +54,37 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
     end
   end
 
+  describe '#create' do
+    context 'when the submitted entity is not valid' do
+      it 'responds with 400' do
+        post :create, {:apartment => {:name => Faker::Commerce.product_name, :capacity => -1, :description => Faker::Lorem.paragraphs}}
+        expect(response).to be_bad_request
+      end
+    end
+
+    context 'when the submitted entity is valid' do
+      let(:submitted_apartment) { FactoryGirl.build(:apartment) }
+
+      before :each do
+        post :create, {:apartment => FactoryGirl.attributes_for(:apartment)}
+      end
+
+      it 'responds with 201' do
+        expect(response).to be_created
+      end
+
+      it 'creates an apartment with the given attributes values' do
+        id = JSON.parse(response.body)['apartment']['id']
+
+
+        created_apartment = Apartment::Apartment.find id
+        expect(created_apartment.name).to eq(submitted_apartment.name)
+        expect(created_apartment.capacity).to eq(submitted_apartment.capacity)
+        expect(created_apartment.description).to eq(submitted_apartment.description)
+
+      end
+    end
+  end
+
 
 end
