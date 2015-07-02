@@ -36,6 +36,17 @@ class Apartment::ApartmentsController < ApplicationController
     render json: {error: 'Apartment does not exist'}, status: :not_found
   end
 
+  def destroy
+    apartment = Apartment::Apartment.find params[:id]
+    if apartment.delete
+      render json: [] , status: :no_content
+    else
+      render json: {errors: 'Error while deleting apartment'}, status: :bad_request
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: {error: 'Apartment does not exist'}, status: :not_found
+  end
+
   private
 
   def apartment_params

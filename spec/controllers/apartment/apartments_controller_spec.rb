@@ -126,5 +126,34 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
     end
   end
 
+  describe '#delete' do
+    context 'when the entity does not exists' do
+      it 'responds with 404' do
+        delete :destroy, {:id => 4.to_s}
+        expect(response).to be_not_found
+      end
+    end
+
+    context 'when the entity is found' do
+      let(:apartment_to_be_deleted) { FactoryGirl.create :apartment }
+
+      context 'when the entity is not deleted' do
+        it 'responds with 204' do
+          delete :destroy, {:id => apartment_to_be_deleted.id.to_s}
+          expect(response.code).to eq('204')
+          expect {Apartment::Apartment.find apartment_to_be_deleted.id}.to raise_error ActiveRecord::RecordNotFound
+        end
+      end
+
+      context 'when the entity is already deleted' do
+        it 'responds with 404' do
+          apartment_to_be_deleted.delete
+          delete :destroy, {:id => apartment_to_be_deleted.id.to_s}
+          expect(response).to be_not_found
+        end
+      end
+    end
+  end
+
 
 end

@@ -59,7 +59,7 @@ Rails.application.routes.draw do
   resources :customers, only: [:index, :show, :create, :update]
 
   scope module: 'apartment' do
-    resources :apartments, only: [:index, :show, :create, :update]
+    resources :apartments, only: [:index, :show, :create, :update, :destroy]
   end
 
 end

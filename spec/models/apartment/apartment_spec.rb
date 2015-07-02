@@ -14,4 +14,14 @@ RSpec.describe Apartment::Apartment, type: :model do
       it { should validate_numericality_of(:capacity).only_integer.is_greater_than(0) }
     end
   end
+
+  context 'acts as paranoid' do
+    it 'sets deleted_at on deletion' do
+      apartment = FactoryGirl.create :apartment
+      expect(apartment.deleted_at).to be_nil
+
+      apartment.destroy!
+      expect(apartment.deleted_at).not_to be_nil
+    end
+  end
 end
