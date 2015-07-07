@@ -60,6 +60,7 @@ Rails.application.routes.draw do
 
   scope module: 'apartment' do
     resources :apartments, only: [:index, :show, :create, :update, :destroy]
+    resources :equipments
   end
 
 end
