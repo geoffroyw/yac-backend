@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Apartment::Apartment, type: :model do
+  describe 'it has many equipment through apartment equipments' do
+    it { should have_many(:equipments).through(:apartment_equipments)}
+  end
+
+  describe 'it has many apartment_equipments' do
+    it { should have_many :apartment_equipments }
+  end
+
   describe 'it validates presence of name' do
     it { should validate_presence_of :name }
   end
