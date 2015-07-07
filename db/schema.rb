@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150702172049) do
+ActiveRecord::Schema.define(version: 20150707164104) do
 
   create_table "addresses", force: :cascade do |t|
     t.string   "address",     limit: 255, null: false
@@ -24,6 +24,16 @@ ActiveRecord::Schema.define(version: 20150702172049) do
     t.integer  "customer_id", limit: 4
   end
 
+  create_table "apartment_apartment_equipments", force: :cascade do |t|
+    t.integer  "apartment_id", limit: 4
+    t.integer  "equipment_id", limit: 4
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "apartment_apartment_equipments", ["apartment_id"], name: "index_apartment_apartment_equipments_on_apartment_id", using: :btree
+  add_index "apartment_apartment_equipments", ["equipment_id"], name: "index_apartment_apartment_equipments_on_equipment_id", using: :btree
+
   create_table "apartment_apartments", force: :cascade do |t|
     t.string   "name",        limit: 255,   null: false
     t.integer  "capacity",    limit: 4,     null: false
@@ -34,6 +44,13 @@ ActiveRecord::Schema.define(version: 20150702172049) do
   end
 
   add_index "apartment_apartments", ["deleted_at"], name: "index_apartment_apartments_on_deleted_at", using: :btree
+
+  create_table "apartment_equipment", force: :cascade do |t|
+    t.string   "name",        limit: 255
+    t.string   "description", limit: 255
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
 
   create_table "countries", force: :cascade do |t|
     t.string   "name",       limit: 255, null: false
