@@ -2,6 +2,13 @@
 
 
 
+== YAC (Yet Another CRM)
+
+YAC (Yet Another CRM) is a simple CRM targetted at people renting self catering apartment in order to easily manage booking, customers...
+
+This application is splitted in two parts: the backend (this repo) which is basically a Rails-Api application and the frontend (which is still to be developped).
+
+
 == README
 
 This README would normally document whatever steps are necessary to get the
