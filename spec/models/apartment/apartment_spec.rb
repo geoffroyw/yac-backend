@@ -9,6 +9,10 @@ RSpec.describe Apartment::Apartment, type: :model do
     it { should have_many :apartment_equipments }
   end
 
+  describe 'it has many rentals' do
+    it {should have_many(:rentals)}
+  end
+
   describe 'it validates presence of name' do
     it { should validate_presence_of :name }
   end

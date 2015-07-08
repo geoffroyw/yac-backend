@@ -1,6 +1,7 @@
 class Apartment::Apartment < ActiveRecord::Base
   acts_as_paranoid
 
+  has_many :rentals
   has_many :apartment_equipments
   has_many :equipments, :through => :apartment_equipments
 

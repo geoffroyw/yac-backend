@@ -14,8 +14,12 @@
 require 'rails_helper'
 
 RSpec.describe Customer, type: :model do
-  describe 'it should have one address' do
+  describe 'it has one address' do
     it {should have_one(:address)}
+  end
+
+  describe 'it has many rentals' do
+    it {should have_many(:rentals)}
   end
 
   describe 'it validates presence of first_name' do
