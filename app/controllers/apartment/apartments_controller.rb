@@ -50,7 +50,9 @@ class Apartment::ApartmentsController < ApplicationController
   private
 
   def apartment_params
-    params.require(:apartment)
-        .permit(:name, :description, :capacity)
+    hash = params.require(:apartment)
+        .permit(:name, :description, :capacity, :equipments => []).tap{|whitelisted| whitelisted[:equipment_ids] = whitelisted[:equipments] if whitelisted.has_key? :equipments}
+    hash.delete(:equipments)
+    hash
   end
 end
