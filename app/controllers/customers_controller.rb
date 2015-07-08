@@ -3,12 +3,12 @@ class CustomersController < ActionController::API
   include ActionController::Serialization
 
   def index
-    customers = Customer.all
+    customers = Customer.includes(:address).all
     render json: customers, each_serializer: CustomerSerializer
   end
 
   def show
-    customer = Customer.find params[:id]
+    customer = Customer.includes(:address).find params[:id]
     if stale?(customer, ast_modified: customer.updated_at)
       render json: customer, serializer: CustomerSerializer
     end

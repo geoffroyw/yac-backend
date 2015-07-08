@@ -43,6 +43,11 @@ RSpec.describe CustomersController, type: :controller do
           expect(customer['last_name']).to eq(expected_customer.last_name)
           expect(customer['email']).to eq(expected_customer.email)
           expect(customer['phone']).to eq(expected_customer.phone)
+          expect(customer['address'][0]['address']).to eq(expected_customer.address.address)
+          expect(customer['address'][0]['address2']).to eq(expected_customer.address.address2)
+          expect(customer['address'][0]['postal_code']).to eq(expected_customer.address.postal_code)
+          expect(customer['address'][0]['city']).to eq(expected_customer.address.city)
+          expect(customer['address'][0]['country'][0]['id']).to eq(expected_customer.address.country.id)
         end
       end
 
