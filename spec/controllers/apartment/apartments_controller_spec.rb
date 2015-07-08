@@ -6,7 +6,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
     describe '#index' do
       before :each do
         @expected_apartments = []
-        (0..3).each { @expected_apartments << FactoryGirl.create(:apartment) }
+        (0..3).each { @expected_apartments << FactoryGirl.create(:apartment_with_equipments) }
         get :index
       end
 
@@ -24,11 +24,11 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
   end
 
   describe '#show' do
-    let(:expected_apartment) { FactoryGirl.create :apartment }
+    let(:expected_apartment_with_equipments) { FactoryGirl.create :apartment_with_equipments }
 
     context 'when the apartment is found' do
       before :each do
-        get :show, {:id => expected_apartment.id}
+        get :show, {:id => expected_apartment_with_equipments.id}
       end
 
       it 'responds with 200' do
@@ -39,10 +39,11 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         body = JSON.parse(response.body)
         apartment = body['apartment']
 
-        expect(apartment['id']).to eq(expected_apartment.id)
-        expect(apartment['name']).to eq(expected_apartment.name)
-        expect(apartment['capacity']).to eq(expected_apartment.capacity)
-        expect(apartment['description']).to eq(expected_apartment.description)
+        expect(apartment['id']).to eq(expected_apartment_with_equipments.id)
+        expect(apartment['name']).to eq(expected_apartment_with_equipments.name)
+        expect(apartment['capacity']).to eq(expected_apartment_with_equipments.capacity)
+        expect(apartment['description']).to eq(expected_apartment_with_equipments.description)
+        expect(apartment['equipments']).to eq(expected_apartment_with_equipments.equipments.map {|e| e.id} )
       end
     end
 
