@@ -27,6 +27,14 @@ RSpec.describe Apartment::Apartment, type: :model do
     end
   end
 
+  describe 'it has many apartment_prices' do
+    it { should have_many :apartment_prices }
+  end
+
+  describe 'it has many prices through apartment_prices' do
+    it { should have_many(:prices).through(:apartment_prices) }
+  end
+
   context 'acts as paranoid' do
     it 'sets deleted_at on deletion' do
       apartment = FactoryGirl.create :apartment

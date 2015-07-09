@@ -21,8 +21,15 @@ RSpec.describe Pricing::Price, type: :model do
     it { should validate_numericality_of(:number_of_night).only_integer.is_greater_than(0) }
   end
 
-
   describe 'it belongs to period' do
     it { should belong_to :period }
+  end
+
+  describe 'it has many apartment_prices' do
+    it { should have_many :apartment_prices }
+  end
+
+  describe 'it has many apartments through apartment_prices' do
+    it { should have_many(:apartments).through(:apartment_prices) }
   end
 end

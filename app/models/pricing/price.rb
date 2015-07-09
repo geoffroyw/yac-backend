@@ -1,5 +1,7 @@
 class Pricing::Price < ActiveRecord::Base
   belongs_to :period
+  has_many :apartment_prices
+  has_many :apartments, :through => :apartment_prices
 
   monetize :amount_cents, :numericality => {:greater_than => 0}, :as => :amount
 

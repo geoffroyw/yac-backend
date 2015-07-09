@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150709201402) do
+ActiveRecord::Schema.define(version: 20150709202300) do
 
   create_table "addresses", force: :cascade do |t|
     t.string   "address",     limit: 255, null: false
@@ -67,6 +67,16 @@ ActiveRecord::Schema.define(version: 20150709201402) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "pricing_apartment_prices", force: :cascade do |t|
+    t.integer  "apartment_id", limit: 4
+    t.integer  "price_id",     limit: 4
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "pricing_apartment_prices", ["apartment_id"], name: "index_pricing_apartment_prices_on_apartment_id", using: :btree
+  add_index "pricing_apartment_prices", ["price_id"], name: "index_pricing_apartment_prices_on_price_id", using: :btree
 
   create_table "pricing_periods", force: :cascade do |t|
     t.date     "start_date"
