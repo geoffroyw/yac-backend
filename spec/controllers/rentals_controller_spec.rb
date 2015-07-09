@@ -89,5 +89,48 @@ RSpec.describe RentalsController, type: :controller do
       end
     end
 
+    describe '#update' do
+      context 'when the entity does not exists' do
+        it 'responds with 404' do
+          put :update, {:id => 4.to_s}
+          expect(response).to be_not_found
+        end
+      end
+
+      context 'when the entity is found' do
+        let(:rental_to_be_updated) { FactoryGirl.create :with_customer_and_apartment }
+
+        context 'when the submitted parameters are not valid' do
+          it 'responds with 400' do
+            rental_to_be_updated.number_of_adult = -5
+            put :update, {:id => rental_to_be_updated.id.to_s,
+                          :rental => rental_to_be_updated.attributes.merge(customer: rental_to_be_updated.customer.id).merge(apartment: rental_to_be_updated.apartment.id)}
+            expect(response).to be_bad_request
+          end
+        end
+
+        context 'when the submitted parameters are valid' do
+          it 'responds with 200' do
+            rental_to_be_updated.start_date = Date.today + 1.month
+            rental_to_be_updated.end_date = Date.today + 1.year
+            put :update, {:id => rental_to_be_updated.id.to_s,
+                          :rental => rental_to_be_updated.attributes.merge(customer: rental_to_be_updated.customer.id).merge(apartment: rental_to_be_updated.apartment.id)}
+            expect(response).to be_ok
+          end
+
+          it 'updates the entity' do
+            rental_to_be_updated.start_date = Date.today + 1.month
+            rental_to_be_updated.end_date = Date.today + 1.year
+            put :update, {:id => rental_to_be_updated.id.to_s,
+                          :rental => rental_to_be_updated.attributes.merge(customer: rental_to_be_updated.customer.id).merge(apartment: rental_to_be_updated.apartment.id)}
+
+            rental_from_db = Rental.find(rental_to_be_updated.id)
+            expect(rental_from_db.start_date).to eq(Date.today + 1.month)
+            expect(rental_from_db.end_date).to eq(Date.today + 1.year)
+          end
+        end
+      end
+    end
+
   end
 end

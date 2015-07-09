@@ -25,6 +25,17 @@ class RentalsController < ApplicationController
     end
   end
 
+  def update
+    rental = Rental.find params[:id]
+    if rental.update rental_params
+      render json: rental, serializer: RentalSerializer, status: :ok
+    else
+      render json: {errors: rental.errors}, status: :bad_request
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: {error: 'Rental does not exist'}, status: :not_found
+  end
+
 
   private
   def rental_params
