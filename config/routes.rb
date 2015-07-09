@@ -63,5 +63,5 @@ Rails.application.routes.draw do
     resources :equipments
   end
 
-  resources :rentals, only: [:index]
+  resources :rentals, only: [:index, :show]
 end
