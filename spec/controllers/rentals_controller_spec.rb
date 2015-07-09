@@ -53,5 +53,41 @@ RSpec.describe RentalsController, type: :controller do
         end
       end
     end
+
+    describe '#create' do
+      context 'when the submitted entity is not valid' do
+        it 'responds with 400' do
+          post :create, {:rental => {start_date: ''}}
+          expect(response).to be_bad_request
+        end
+      end
+
+      context 'when the submitted entity is valid' do
+        let(:submitted_rental) { FactoryGirl.build(:with_customer_and_apartment) }
+
+        before :each do
+          post :create, {:rental => submitted_rental.attributes.merge(customer: submitted_rental.customer.id).merge(apartment: submitted_rental.apartment.id)}
+        end
+
+        it 'responds with 201' do
+          expect(response).to be_created
+        end
+
+        it 'creates a rental with the given attributes values' do
+          id = JSON.parse(response.body)['rental']['id']
+
+
+          created_rental = Rental.find id
+          expect(created_rental.customer).to eq(submitted_rental.customer)
+          expect(created_rental.apartment).to eq(submitted_rental.apartment)
+          expect(created_rental.start_date).to eq(submitted_rental.start_date)
+          expect(created_rental.state).to eq('draft')
+          expect(created_rental.end_date).to eq(submitted_rental.end_date)
+          expect(created_rental.number_of_adult).to eq(submitted_rental.number_of_adult)
+          expect(created_rental.number_of_children).to eq(submitted_rental.number_of_children)
+        end
+      end
+    end
+
   end
 end
