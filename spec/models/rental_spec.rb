@@ -84,6 +84,57 @@ RSpec.describe Rental, type: :model do
     end
   end
 
+  describe 'it validates that an apartment can only be booked once every day' do
+    before(:each) do
+      @apartment = Apartment::Apartment.new(:capacity => 4)
+      @customer = FactoryGirl.create(:customer)
+    end
+    it 'does not allow a rental to be at the same time of an existing one' do
+      start_date = Date.today
+      end_date = start_date + 1.day
+      @existing_rental = FactoryGirl.create(:rental, :apartment => @apartment, :start_date => start_date, :end_date => end_date, :customer => @customer)
+      @new_rental = Rental.new(:start_date => start_date, :end_date => end_date, :apartment => @apartment)
+      @new_rental.valid?
+      expect(@new_rental.errors.full_messages).to include('Apartment is already booked')
+    end
+
+    it 'does not allow a rental to start before the previous one has ended' do
+      start_date = Date.today
+      end_date = start_date + 10.day
+      @existing_rental = FactoryGirl.create(:rental, :apartment => @apartment, :start_date => start_date, :end_date => end_date, :customer => @customer)
+      @new_rental = Rental.new(:start_date => end_date-1.day, :end_date => end_date+10.day, :apartment => @apartment)
+      @new_rental.valid?
+      expect(@new_rental.errors.full_messages).to include('Apartment is already booked')
+    end
+
+    it 'does not allow a rental to be in the middle of another one' do
+      start_date = Date.today
+      end_date = start_date + 15.day
+      @existing_rental = FactoryGirl.create(:rental, :apartment => @apartment, :start_date => start_date, :end_date => end_date, :customer => @customer)
+      @new_rental = Rental.new(:start_date => Date.today+2.day, :end_date => Date.today+8.day, :apartment => @apartment)
+      @new_rental.valid?
+      expect(@new_rental.errors.full_messages).to include('Apartment is already booked')
+    end
+
+    it 'allows a rental to start on the day the previous one is ending' do
+      start_date = Date.today
+      end_date = start_date + 1.day
+      @existing_rental = FactoryGirl.create(:rental, :apartment => @apartment, :start_date => start_date, :end_date => end_date, :customer => @customer)
+      @new_rental = Rental.new(:start_date => end_date, :end_date => end_date+8.day, :apartment => @apartment)
+      @new_rental.valid?
+      expect(@new_rental.errors.full_messages).not_to include('Apartment is already booked')
+    end
+
+    it 'allows a rental not joining existing one' do
+      start_date = Date.today
+      end_date = start_date + 1.day
+      @existing_rental = FactoryGirl.create(:rental, :apartment => @apartment, :start_date => start_date, :end_date => end_date, :customer => @customer)
+      @new_rental = Rental.new(:start_date => end_date+10.day, :end_date => end_date+20.day, :apartment => @apartment)
+      @new_rental.valid?
+      expect(@new_rental.errors.full_messages).not_to include('Apartment is already booked')
+    end
+  end
+
   describe 'it has a state machine' do
     it 'has draft as initial state' do
       @rental = Rental.new

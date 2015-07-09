@@ -16,6 +16,7 @@ class Rental < ActiveRecord::Base
   validate :end_date_cannot_be_before_start_date
   validate :end_date_cannot_be_in_past
   validate :start_date_cannot_be_in_past
+  validate :an_apartment_can_only_be_booked_once_on_a_given_timeframe
 
   before_validation :default_values
 
@@ -57,6 +58,13 @@ class Rental < ActiveRecord::Base
   def no_capacity_overflow
     unless number_of_adult.nil? || apartment.nil?
       errors.add(:number_of_people, 'can not be greater than the apartment\'s capacity') if number_of_adult+number_of_children > apartment.capacity
+    end
+  end
+
+  def an_apartment_can_only_be_booked_once_on_a_given_timeframe
+    unless apartment.nil? || start_date.nil? || end_date.nil?
+      rental_count = Rental.where('(start_date <= :start_date AND end_date > :start_date) OR (start_date <= :end_date AND end_date > :end_date)', {start_date: start_date, end_date: end_date}).count
+      errors.add(:apartment, 'is already booked') if rental_count > 0
     end
   end
 
