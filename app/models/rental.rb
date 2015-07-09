@@ -20,7 +20,7 @@ class Rental < ActiveRecord::Base
 
   before_validation :default_values
 
-  aasm :column => :state do
+  aasm :column => :state, :skip_validation_on_save => true do
     state :draft, :initial => true
     state :confirmed
     state :canceled

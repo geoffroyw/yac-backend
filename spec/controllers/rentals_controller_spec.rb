@@ -132,5 +132,75 @@ RSpec.describe RentalsController, type: :controller do
       end
     end
 
+    describe '#confirm' do
+      context 'when the entity does not exists' do
+        it 'responds with 404' do
+          put :confirm, {:id => 4.to_s}
+          expect(response).to be_not_found
+        end
+      end
+
+      context 'when the entity is found' do
+        let(:rental_to_be_confirmed) { FactoryGirl.create :with_customer_and_apartment }
+
+        context 'when the rental can not be confirmed' do
+          it 'responds with 400' do
+            rental_to_be_confirmed.confirm!
+            put :confirm, {:id => rental_to_be_confirmed.id.to_s}
+            expect(response).to be_bad_request
+          end
+        end
+
+        context 'when the rental can be confirmed' do
+          it 'responds with 200' do
+            put :confirm, {:id => rental_to_be_confirmed.id.to_s}
+            expect(response).to be_ok
+          end
+
+          it 'updates the entity' do
+            put :confirm, {:id => rental_to_be_confirmed.id.to_s}
+
+            rental_from_db = Rental.find(rental_to_be_confirmed.id)
+            expect(rental_from_db.confirmed?).to be true
+          end
+        end
+      end
+    end
+
+    describe '#cancel' do
+      context 'when the entity does not exists' do
+        it 'responds with 404' do
+          put :cancel, {:id => 4.to_s}
+          expect(response).to be_not_found
+        end
+      end
+
+      context 'when the entity is found' do
+        let(:rental_to_be_canceled) { FactoryGirl.create :with_customer_and_apartment }
+
+        context 'when the rental can not be canceled' do
+          it 'responds with 400' do
+            rental_to_be_canceled.cancel!
+            put :cancel, {:id => rental_to_be_canceled.id.to_s}
+            expect(response).to be_bad_request
+          end
+        end
+
+        context 'when the rental can be canceled' do
+          it 'responds with 200' do
+            put :cancel, {:id => rental_to_be_canceled.id.to_s}
+            expect(response).to be_ok
+          end
+
+          it 'updates the entity' do
+            put :cancel, {:id => rental_to_be_canceled.id.to_s}
+
+            rental_from_db = Rental.find(rental_to_be_canceled.id)
+            expect(rental_from_db.canceled?).to be true
+          end
+        end
+      end
+    end
+
   end
 end

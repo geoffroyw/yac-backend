@@ -36,6 +36,25 @@ class RentalsController < ApplicationController
     render json: {error: 'Rental does not exist'}, status: :not_found
   end
 
+  def confirm
+    rental = Rental.find params[:id]
+    rental.confirm!
+    render json: rental, serializer: RentalSerializer, status: :ok
+  rescue ActiveRecord::RecordNotFound
+    render json: {error: 'Rental does not exist'}, status: :not_found
+  rescue AASM::InvalidTransition
+    render json: {error: 'Rental can not be confirmed'}, status: :bad_request
+  end
+
+  def cancel
+    rental = Rental.find params[:id]
+    rental.cancel!
+    render json: rental, serializer: RentalSerializer, status: :ok
+  rescue ActiveRecord::RecordNotFound
+    render json: {error: 'Rental does not exist'}, status: :not_found
+  rescue AASM::InvalidTransition
+    render json: {error: 'Rental can not be canceled'}, status: :bad_request
+  end
 
   private
   def rental_params

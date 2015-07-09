@@ -63,5 +63,10 @@ Rails.application.routes.draw do
     resources :equipments
   end
 
-  resources :rentals, only: [:index, :show, :create, :update]
+  resources :rentals, only: [:index, :show, :create, :update] do
+    member do
+      put 'confirm'
+      put 'cancel'
+    end
+  end
 end
