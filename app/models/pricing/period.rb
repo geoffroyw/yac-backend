@@ -1,4 +1,6 @@
 class Pricing::Period < ActiveRecord::Base
+  has_many :prices
+
   validates_presence_of :name
   validate :end_date_cannot_be_before_start_date
 

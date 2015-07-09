@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Pricing::Period, type: :model do
+  describe 'it has_many prices' do
+    it { should have_many :prices }
+  end
+
   describe 'it validates presence of name' do
     it { should validate_presence_of :name }
   end

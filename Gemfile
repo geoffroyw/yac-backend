@@ -13,7 +13,9 @@ gem 'active_model_serializers', '~>0.9'
 
 gem 'paranoia', '~> 2.0'
 
-gem 'aasm', '~> 4.2.0'
+gem 'aasm', '~> 4.2'
+
+gem 'money-rails', '~> 1.4'
 
 group :test do
   gem 'rspec-core', '~>3.2'

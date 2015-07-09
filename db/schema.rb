@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150709195749) do
+ActiveRecord::Schema.define(version: 20150709201402) do
 
   create_table "addresses", force: :cascade do |t|
     t.string   "address",     limit: 255, null: false
@@ -75,6 +75,17 @@ ActiveRecord::Schema.define(version: 20150709195749) do
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
+
+  create_table "pricing_prices", force: :cascade do |t|
+    t.integer  "period_id",       limit: 4
+    t.integer  "number_of_night", limit: 4
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.integer  "amount_cents",    limit: 4,   default: 0,     null: false
+    t.string   "amount_currency", limit: 255, default: "EUR", null: false
+  end
+
+  add_index "pricing_prices", ["period_id"], name: "index_pricing_prices_on_period_id", using: :btree
 
   create_table "rentals", force: :cascade do |t|
     t.integer  "customer_id",        limit: 4
