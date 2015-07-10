@@ -14,4 +14,18 @@ class Pricing::PeriodsController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     render json: {error: 'Period does not exist'}, status: :not_found
   end
+
+  def create
+    period = Pricing::Period.new period_params
+    if period.save
+      render json: period, serializer: Pricing::PeriodSerializer, status: :created
+    else
+      render json: {errors: period.errors}, status: :bad_request
+    end
+  end
+
+  private
+  def period_params
+    params.require(:period).permit(:name, :start_date, :end_date)
+  end
 end

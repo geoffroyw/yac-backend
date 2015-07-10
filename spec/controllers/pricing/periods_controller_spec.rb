@@ -52,5 +52,36 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
         end
       end
     end
+
+    describe '#create' do
+      context 'when the submitted entity is not valid' do
+        it 'responds with 400' do
+          post :create, {:period => {:name => ''}}
+          expect(response).to be_bad_request
+        end
+      end
+
+      context 'when the submitted entity is valid' do
+        let(:submitted_period) { FactoryGirl.build(:period) }
+
+        before :each do
+          post :create, {:period => submitted_period.attributes}
+        end
+
+        it 'responds with 201' do
+          expect(response).to be_created
+        end
+
+        it 'creates an apartment with the given attributes values' do
+          id = JSON.parse(response.body)['period']['id']
+
+
+          created_period = Pricing::Period.find id
+          expect(created_period.name).to eq(submitted_period.name)
+          expect(created_period.start_date).to eq(submitted_period.start_date)
+          expect(created_period.end_date).to eq(submitted_period.end_date)
+        end
+      end
+    end
   end
 end
