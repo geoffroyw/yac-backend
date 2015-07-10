@@ -72,5 +72,6 @@ Rails.application.routes.draw do
 
   scope module: 'pricing' do
     resources :periods, only: [:index, :show, :create, :update]
+    resources :prices, only: [:index, :show]
   end
 end

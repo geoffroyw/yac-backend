@@ -1,9 +1,9 @@
 FactoryGirl.define do
-  factory :pricing_price, :class => 'Pricing::Price' do
-    period_id 1
-number_of_night 1
-amount "9.99"
-currency_id 1
+  factory :price, :class => 'Pricing::Price' do
+    association :period
+    number_of_night Faker::Number.number(2)
+    amount_cents Faker::Commerce.price
+
   end
 
 end
