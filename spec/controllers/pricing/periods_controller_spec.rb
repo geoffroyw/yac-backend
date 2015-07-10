@@ -83,5 +83,45 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
         end
       end
     end
+
+    describe '#update' do
+      context 'when the entity does not exists' do
+        it 'responds with 404' do
+          put :update, {:id => 4.to_s}
+          expect(response).to be_not_found
+        end
+      end
+
+      context 'when the entity is found' do
+        let(:period_to_be_updated) { FactoryGirl.create :period }
+
+        context 'when the submitted parameters are not valid' do
+          it 'responds with 400' do
+            period_to_be_updated.name = ''
+            put :update, {:id => period_to_be_updated.id.to_s,
+                          :period => period_to_be_updated.attributes}
+            expect(response).to be_bad_request
+          end
+        end
+
+        context 'when the submitted parameters are valid' do
+          it 'responds with 200' do
+            period_to_be_updated.name = 'NewName'
+            put :update, {:id => period_to_be_updated.id.to_s,
+                          :period => period_to_be_updated.attributes}
+            expect(response).to be_ok
+          end
+
+          it 'updates the entity' do
+            period_to_be_updated.name = 'NewName'
+            put :update, {:id => period_to_be_updated.id.to_s,
+                          :period => period_to_be_updated.attributes}
+
+            period_from_db = Pricing::Period.find(period_to_be_updated.id)
+            expect(period_from_db.name).to eq('NewName')
+          end
+        end
+      end
+    end
   end
 end

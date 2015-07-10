@@ -24,6 +24,17 @@ class Pricing::PeriodsController < ApplicationController
     end
   end
 
+  def update
+    period = Pricing::Period.find params[:id]
+    if period.update period_params
+      render json: period, serializer: Pricing::PeriodSerializer, status: :ok
+    else
+      render json: {errors: period.errors}, status: :bad_request
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: {error: 'Period does not exist'}, status: :not_found
+  end
+
   private
   def period_params
     params.require(:period).permit(:name, :start_date, :end_date)
