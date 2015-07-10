@@ -69,4 +69,8 @@ Rails.application.routes.draw do
       put 'cancel'
     end
   end
+
+  scope module: 'pricing' do
+    resources :periods
+  end
 end
