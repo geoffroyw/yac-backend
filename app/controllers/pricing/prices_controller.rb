@@ -14,4 +14,18 @@ class Pricing::PricesController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     render json: {error: 'Price does not exist'}, status: :not_found
   end
+
+  def create
+    price = Pricing::Price.new price_params
+    if price.save
+      render json: price, serializer: Pricing::PriceSerializer, status: :created
+    else
+      render json: {errors: price.errors}, status: :bad_request
+    end
+  end
+
+  private
+  def price_params
+    params.require(:price).permit(:number_of_night, :amount_cents, :amount_currency, :period_id)
+  end
 end

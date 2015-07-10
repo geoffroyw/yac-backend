@@ -56,6 +56,37 @@ RSpec.describe Pricing::PricesController, type: :controller do
         end
       end
     end
+
+    describe '#create' do
+      context 'when the submitted entity is not valid' do
+        it 'responds with 400' do
+          post :create, {:price => {:number_of_night => -5}}
+          expect(response).to be_bad_request
+        end
+      end
+
+      context 'when the submitted entity is valid' do
+        let(:submitted_price) { FactoryGirl.build(:price) }
+
+        before :each do
+          post :create, {:price => submitted_price.attributes}
+        end
+
+        it 'responds with 201' do
+          expect(response).to be_created
+        end
+
+        it 'creates a Price with the given attributes values' do
+          id = JSON.parse(response.body)['price']['id']
+
+
+          created_price = Pricing::Price.find id
+          expect(created_price.number_of_night).to eq(submitted_price.number_of_night)
+          expect(created_price.amount_cents).to eq(submitted_price.amount_cents)
+          expect(created_price.period.id).to eq(submitted_price.period.id)
+        end
+      end
+    end
   end
 
 end
