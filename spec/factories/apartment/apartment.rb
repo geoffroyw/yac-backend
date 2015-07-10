@@ -8,11 +8,12 @@ FactoryGirl.define do
 
     factory :apartment_with_equipments do
       transient do
-        equipments_count 5
+        association_count 5
+        price_count 5
       end
 
       after(:create) do |apartment, evaluator|
-        create_list(:apartment_equipment, evaluator.equipments_count, apartment: apartment)
+        create_list(:apartment_equipment, evaluator.association_count, apartment: apartment)
       end
     end
   end

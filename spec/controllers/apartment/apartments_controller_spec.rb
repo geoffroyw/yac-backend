@@ -44,6 +44,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         expect(apartment['capacity']).to eq(expected_apartment_with_equipments.capacity)
         expect(apartment['description']).to eq(expected_apartment_with_equipments.description)
         expect(apartment['equipments']).to eq(expected_apartment_with_equipments.equipments.map {|e| e.id} )
+        expect(apartment['prices']).to eq(expected_apartment_with_equipments.prices.map {|p| p.id} )
       end
     end
 
