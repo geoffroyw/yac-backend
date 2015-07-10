@@ -24,6 +24,17 @@ class Pricing::PricesController < ApplicationController
     end
   end
 
+  def update
+    price = Pricing::Price.find params[:id]
+    if price.update price_params
+      render json: price, serializer: Pricing::PriceSerializer, status: :ok
+    else
+      render json: {errors: price.errors}, status: :bad_request
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: {error: 'Price does not exist'}, status: :not_found
+  end
+
   private
   def price_params
     params.require(:price).permit(:number_of_night, :amount_cents, :amount_currency, :period_id)

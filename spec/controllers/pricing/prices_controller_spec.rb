@@ -87,6 +87,45 @@ RSpec.describe Pricing::PricesController, type: :controller do
         end
       end
     end
-  end
 
+    describe '#update' do
+      context 'when the entity does not exists' do
+        it 'responds with 404' do
+          put :update, {:id => 4.to_s}
+          expect(response).to be_not_found
+        end
+      end
+
+      context 'when the entity is found' do
+        let(:price_to_be_updated) { FactoryGirl.create :price }
+
+        context 'when the submitted parameters are not valid' do
+          it 'responds with 400' do
+            price_to_be_updated.number_of_night = -150
+            put :update, {:id => price_to_be_updated.id.to_s,
+                          :price => price_to_be_updated.attributes}
+            expect(response).to be_bad_request
+          end
+        end
+
+        context 'when the submitted parameters are valid' do
+          it 'responds with 200' do
+            price_to_be_updated.number_of_night = 150
+            put :update, {:id => price_to_be_updated.id.to_s,
+                          :price => price_to_be_updated.attributes}
+            expect(response).to be_ok
+          end
+
+          it 'updates the entity' do
+            price_to_be_updated.number_of_night = 150
+            put :update, {:id => price_to_be_updated.id.to_s,
+                          :price => price_to_be_updated.attributes}
+
+            price_from_db = Pricing::Price.find(price_to_be_updated.id)
+            expect(price_from_db.number_of_night).to eq(150)
+          end
+        end
+      end
+    end
+  end
 end
