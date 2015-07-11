@@ -89,6 +89,17 @@ RSpec.describe Rental, type: :model do
       @apartment = Apartment::Apartment.new(:capacity => 4)
       @customer = FactoryGirl.create(:customer)
     end
+
+    it 'does not allow a rental to be at the same time of an existing canceled one' do
+      start_date = Date.today
+      end_date = start_date + 1.day
+      @existing__canceled_rental = FactoryGirl.create(:rental, :state => 'canceled', :apartment => @apartment, :start_date => start_date, :end_date => end_date, :customer => @customer)
+      @new_rental = Rental.new(:start_date => start_date, :end_date => end_date, :apartment => @apartment)
+      @new_rental.valid?
+      expect(@new_rental.errors.full_messages).not_to include('Apartment is already booked')
+    end
+
+
     it 'does not allow a rental to be at the same time of an existing one' do
       start_date = Date.today
       end_date = start_date + 1.day

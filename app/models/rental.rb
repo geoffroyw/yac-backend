@@ -63,7 +63,7 @@ class Rental < ActiveRecord::Base
 
   def an_apartment_can_only_be_booked_once_on_a_given_timeframe
     unless apartment.nil? || start_date.nil? || end_date.nil?
-      rental_count = Rental.where('(start_date <= :start_date AND end_date > :start_date) OR (start_date <= :end_date AND end_date > :end_date)', {start_date: start_date, end_date: end_date}).count
+      rental_count = Rental.where('state != :state AND (start_date <= :start_date AND end_date > :start_date) OR (start_date <= :end_date AND end_date > :end_date)', {start_date: start_date, end_date: end_date, state: 'canceled'}).count
       errors.add(:apartment, 'is already booked') if rental_count > 0
     end
   end
