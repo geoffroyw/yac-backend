@@ -4,6 +4,7 @@ RSpec.describe CountriesController, type: :controller do
 
   describe 'Country API' do
     describe '#index' do
+      login_user
       before :each do
         france = FactoryGirl.create :country, name: 'France'
         usa = FactoryGirl.create :country, name: 'USA'
@@ -25,6 +26,7 @@ RSpec.describe CountriesController, type: :controller do
 
 
     describe '#show' do
+      login_user
       let!(:country_to_be_retrieved) {FactoryGirl.create :country}
 
       context 'when the resource is found' do

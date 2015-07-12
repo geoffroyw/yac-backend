@@ -4,6 +4,7 @@ RSpec.describe RentalsController, type: :controller do
   describe 'Rentals API' do
 
     describe '#index' do
+      login_user
       let(:expected_rentals) { Rental.all }
 
       before :each do
@@ -21,6 +22,7 @@ RSpec.describe RentalsController, type: :controller do
     end
 
     describe '#show' do
+      login_user
       let(:expected_rental) { FactoryGirl.create :with_customer_and_apartment }
 
       context 'when the rental is found' do
@@ -55,6 +57,7 @@ RSpec.describe RentalsController, type: :controller do
     end
 
     describe '#create' do
+      login_user
       context 'when the submitted entity is not valid' do
         it 'responds with 400' do
           post :create, {:rental => {start_date: ''}}
@@ -90,6 +93,7 @@ RSpec.describe RentalsController, type: :controller do
     end
 
     describe '#update' do
+      login_user
       context 'when the entity does not exists' do
         it 'responds with 404' do
           put :update, {:id => 4.to_s}
@@ -133,6 +137,7 @@ RSpec.describe RentalsController, type: :controller do
     end
 
     describe '#confirm' do
+      login_user
       context 'when the entity does not exists' do
         it 'responds with 404' do
           put :confirm, {:id => 4.to_s}
@@ -168,6 +173,7 @@ RSpec.describe RentalsController, type: :controller do
     end
 
     describe '#cancel' do
+      login_user
       context 'when the entity does not exists' do
         it 'responds with 404' do
           put :cancel, {:id => 4.to_s}

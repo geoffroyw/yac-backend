@@ -17,6 +17,8 @@ gem 'aasm', '~> 4.2'
 
 gem 'money-rails', '~> 1.4'
 
+gem 'devise', '~> 3.5'
+
 group :test do
   gem 'rspec-core', '~>3.2'
   gem 'rspec-expectations', '~>3.2'

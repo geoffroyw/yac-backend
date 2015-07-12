@@ -5,6 +5,7 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
   describe 'Equipments API' do
 
     describe '#index' do
+      login_user
       before :each do
         @expected_equipments = []
         (0..3).each { @expected_equipments << FactoryGirl.create(:equipment) }
@@ -24,6 +25,7 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
     end
 
     describe '#show' do
+      login_user
       let(:expected_equipment) { FactoryGirl.create :equipment }
 
       context 'when the apartment is found' do
@@ -54,6 +56,7 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
     end
 
     describe '#create' do
+      login_user
       context 'when the submitted entity is not valid' do
         it 'responds with 400' do
           post :create, {:equipment => {:description => Faker::Lorem.paragraph}}
@@ -85,6 +88,7 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
     end
 
     describe '#update' do
+      login_user
       context 'when the entity does not exists' do
         it 'responds with 404' do
           put :update, {:id => 4.to_s}
@@ -125,6 +129,7 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
     end
 
     describe '#delete' do
+      login_user
       context 'when the entity does not exists' do
         it 'responds with 404' do
           delete :destroy, {:id => 4.to_s}

@@ -5,6 +5,8 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
   describe 'Period API' do
 
     describe '#index' do
+      login_user
+      login_user
       before :each do
         @expected_periods = []
         (0..3).each { @expected_periods << FactoryGirl.create(:period) }
@@ -17,12 +19,12 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
 
       it 'returns all the apartments in JSON' do
         body = JSON.parse(response.body)
-
         expect(body['periods']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(@expected_periods).to_json))
       end
     end
 
     describe '#show' do
+      login_user
       let(:expected_period) { FactoryGirl.create :period }
 
       context 'when the period is found' do
@@ -54,6 +56,7 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
     end
 
     describe '#create' do
+      login_user
       context 'when the submitted entity is not valid' do
         it 'responds with 400' do
           post :create, {:period => {:name => ''}}
@@ -85,6 +88,7 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
     end
 
     describe '#update' do
+      login_user
       context 'when the entity does not exists' do
         it 'responds with 404' do
           put :update, {:id => 4.to_s}

@@ -4,6 +4,7 @@ RSpec.describe Pricing::PricesController, type: :controller do
   describe 'Prices API' do
 
     describe '#index' do
+      login_user
       before :each do
         @expected_prices = []
         (0..3).each { @expected_prices << FactoryGirl.create(:price) }
@@ -22,6 +23,7 @@ RSpec.describe Pricing::PricesController, type: :controller do
     end
 
     describe '#show' do
+      login_user
       let(:expected_price) { FactoryGirl.create :price }
 
       context 'when the price is found' do
@@ -36,7 +38,6 @@ RSpec.describe Pricing::PricesController, type: :controller do
         it 'returns the price in JSON' do
           body = JSON.parse(response.body)
           price = body['price']
-          puts price
 
           expect(price['id']).to eq(expected_price.id)
           expect(price['number_of_night']).to eq(expected_price.number_of_night)
@@ -58,6 +59,7 @@ RSpec.describe Pricing::PricesController, type: :controller do
     end
 
     describe '#create' do
+      login_user
       context 'when the submitted entity is not valid' do
         it 'responds with 400' do
           post :create, {:price => {:number_of_night => -5}}
@@ -89,6 +91,7 @@ RSpec.describe Pricing::PricesController, type: :controller do
     end
 
     describe '#update' do
+      login_user
       context 'when the entity does not exists' do
         it 'responds with 404' do
           put :update, {:id => 4.to_s}

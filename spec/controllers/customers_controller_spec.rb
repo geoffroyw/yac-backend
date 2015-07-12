@@ -4,6 +4,7 @@ RSpec.describe CustomersController, type: :controller do
   describe 'Customers API' do
 
     describe '#index' do
+      login_user
       let(:expected_customers) { Customer.all }
 
       before :each do
@@ -61,6 +62,7 @@ RSpec.describe CustomersController, type: :controller do
 
 
     describe '#create' do
+      login_user
       context 'when the submitted entity is not valid' do
         it 'responds with 400' do
           post :create, {:customer => {first_name: '', last_name: Faker::Name.last_name}}
@@ -101,6 +103,7 @@ RSpec.describe CustomersController, type: :controller do
     end
 
     describe '#update' do
+      login_user
       context 'when the entity does not exists' do
         it 'responds with 404' do
           put :update, {:id => 4.to_s}

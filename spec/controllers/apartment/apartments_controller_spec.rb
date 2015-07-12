@@ -4,6 +4,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
   describe 'Apartments API' do
 
     describe '#index' do
+      login_user
       before :each do
         @expected_apartments = []
         (0..3).each { @expected_apartments << FactoryGirl.create(:apartment_with_equipments) }
@@ -16,7 +17,6 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
 
       it 'returns all the apartments in JSON' do
         body = JSON.parse(response.body)
-
         expect(body['apartments']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(@expected_apartments).to_json))
 
       end
@@ -24,6 +24,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
   end
 
   describe '#show' do
+    login_user
     let(:expected_apartment_with_equipments) { FactoryGirl.create :apartment_with_equipments }
 
     context 'when the apartment is found' do
@@ -43,8 +44,8 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         expect(apartment['name']).to eq(expected_apartment_with_equipments.name)
         expect(apartment['capacity']).to eq(expected_apartment_with_equipments.capacity)
         expect(apartment['description']).to eq(expected_apartment_with_equipments.description)
-        expect(apartment['equipments']).to eq(expected_apartment_with_equipments.equipments.map {|e| e.id} )
-        expect(apartment['prices']).to eq(expected_apartment_with_equipments.prices.map {|p| p.id} )
+        expect(apartment['equipments']).to eq(expected_apartment_with_equipments.equipments.map { |e| e.id })
+        expect(apartment['prices']).to eq(expected_apartment_with_equipments.prices.map { |p| p.id })
       end
     end
 
@@ -57,6 +58,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
   end
 
   describe '#create' do
+    login_user
     context 'when the submitted entity is not valid' do
       it 'responds with 400' do
         post :create, {:apartment => {:name => Faker::Commerce.product_name, :capacity => -1, :description => Faker::Lorem.paragraphs}}
@@ -88,8 +90,8 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
     end
 
     context 'when the submitted entity contains ids of equipments' do
-      let(:equipment_1) {FactoryGirl.create(:equipment)}
-      let(:equipment_2) {FactoryGirl.create(:equipment)}
+      let(:equipment_1) { FactoryGirl.create(:equipment) }
+      let(:equipment_2) { FactoryGirl.create(:equipment) }
       let(:submitted_apartment) { FactoryGirl.build(:apartment) }
 
       before :each do
@@ -111,6 +113,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
   end
 
   describe '#update' do
+    login_user
     context 'when the entity does not exists' do
       it 'responds with 404' do
         put :update, {:id => 4.to_s, :apartment => FactoryGirl.attributes_for(:apartment)}
@@ -167,7 +170,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         end
 
         it 'updated the equipments if some are passed' do
-          original_equipments_id = apartment_to_be_updated.equipments.each{|e| e.id}
+          original_equipments_id = apartment_to_be_updated.equipments.each { |e| e.id }
           new_equipment = FactoryGirl.create(:equipment)
           equipments_id = [new_equipment.id]
           equipments_id << original_equipments_id
@@ -182,6 +185,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
   end
 
   describe '#delete' do
+    login_user
     context 'when the entity does not exists' do
       it 'responds with 404' do
         delete :destroy, {:id => 4.to_s}
@@ -196,7 +200,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         it 'responds with 204' do
           delete :destroy, {:id => apartment_to_be_deleted.id.to_s}
           expect(response.code).to eq('204')
-          expect {Apartment::Apartment.find apartment_to_be_deleted.id}.to raise_error ActiveRecord::RecordNotFound
+          expect { Apartment::Apartment.find apartment_to_be_deleted.id }.to raise_error ActiveRecord::RecordNotFound
         end
       end
 
@@ -209,6 +213,4 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
       end
     end
   end
-
-
 end
