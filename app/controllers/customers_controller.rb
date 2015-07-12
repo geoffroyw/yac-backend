@@ -1,6 +1,9 @@
 class CustomersController < ActionController::API
-
   include ActionController::Serialization
+
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: {error: 'Customer does not exist'}, status: :not_found
+  end
 
   def index
     customers = Customer.includes(:address).all
@@ -12,8 +15,6 @@ class CustomersController < ActionController::API
     if stale?(customer, ast_modified: customer.updated_at)
       render json: customer, serializer: CustomerSerializer
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Customer does not exist'}, status: :not_found
   end
 
 
@@ -33,8 +34,6 @@ class CustomersController < ActionController::API
     else
       render json: {errors: customer.errors}, status: :bad_request
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Customer does not exist'}, status: :not_found
   end
 
   private

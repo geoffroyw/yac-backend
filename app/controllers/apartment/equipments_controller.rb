@@ -1,6 +1,10 @@
 class Apartment::EquipmentsController < ApplicationController
   include ActionController::Serialization
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: {error: 'Equipment does not exist'}, status: :not_found
+  end
+
   def index
     equipments = Apartment::Equipment.all
     render json: equipments, each_serializer: Apartment::EquipmentSerializer
@@ -11,8 +15,6 @@ class Apartment::EquipmentsController < ApplicationController
     if stale?(equipment, last_modified: equipment.updated_at)
       render json: equipment, serializer: Apartment::EquipmentSerializer
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Equipment does not exist'}, status: :not_found
   end
 
   def create
@@ -31,8 +33,6 @@ class Apartment::EquipmentsController < ApplicationController
     else
       render json: {errors: equipment.errors}, status: :bad_request
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Equipment does not exist'}, status: :not_found
   end
 
   def destroy
@@ -42,8 +42,6 @@ class Apartment::EquipmentsController < ApplicationController
     else
       render json: {errors: 'Error while deleting equipment'}, status: :bad_request
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Equipment does not exist'}, status: :not_found
   end
 
   private

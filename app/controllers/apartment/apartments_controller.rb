@@ -2,6 +2,10 @@ class Apartment::ApartmentsController < ApplicationController
 
   include ActionController::Serialization
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: {error: 'Apartment does not exist'}, status: :not_found
+  end
+
   def index
     apartments = Apartment::Apartment.includes(:equipments).all
     render json: apartments, each_serializer: Apartment::ApartmentSerializer
@@ -12,8 +16,6 @@ class Apartment::ApartmentsController < ApplicationController
     if stale?(apartment, last_modified: apartment.updated_at)
       render json: apartment, serializer: Apartment::ApartmentSerializer
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Apartment does not exist'}, status: :not_found
   end
 
   def create
@@ -32,8 +34,6 @@ class Apartment::ApartmentsController < ApplicationController
     else
       render json: {errors: apartment.errors}, status: :bad_request
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Apartment does not exist'}, status: :not_found
   end
 
   def destroy
@@ -43,8 +43,6 @@ class Apartment::ApartmentsController < ApplicationController
     else
       render json: {errors: 'Error while deleting apartment'}, status: :bad_request
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Apartment does not exist'}, status: :not_found
   end
 
   private

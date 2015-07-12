@@ -1,6 +1,10 @@
 class Pricing::PricesController < ApplicationController
   include ActionController::Serialization
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: {error: 'Price does not exist'}, status: :not_found
+  end
+
   def index
     prices = Pricing::Price.all
     render json: prices, each_serializer: Pricing::PriceSerializer
@@ -11,8 +15,6 @@ class Pricing::PricesController < ApplicationController
     if stale?(price, last_modified: price.updated_at)
       render json: price, serializer: Pricing::PriceSerializer
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Price does not exist'}, status: :not_found
   end
 
   def create
@@ -31,8 +33,6 @@ class Pricing::PricesController < ApplicationController
     else
       render json: {errors: price.errors}, status: :bad_request
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: {error: 'Price does not exist'}, status: :not_found
   end
 
   private
