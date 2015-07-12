@@ -2,6 +2,11 @@ require 'rails_helper'
 
 RSpec.describe RentalsController, type: :controller do
   describe 'Rentals API' do
+    let(:token) { double :acceptable? => true }
+
+    before do
+      allow(controller).to receive_messages(:doorkeeper_token => token)
+    end
 
     describe '#index' do
       login_user

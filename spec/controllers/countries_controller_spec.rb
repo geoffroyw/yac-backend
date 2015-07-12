@@ -3,6 +3,12 @@ require 'rails_helper'
 RSpec.describe CountriesController, type: :controller do
 
   describe 'Country API' do
+    let(:token) { double :acceptable? => true }
+
+    before do
+      allow(controller).to receive_messages(:doorkeeper_token => token)
+    end
+
     describe '#index' do
       login_user
       before :each do
@@ -27,7 +33,7 @@ RSpec.describe CountriesController, type: :controller do
 
     describe '#show' do
       login_user
-      let!(:country_to_be_retrieved) {FactoryGirl.create :country}
+      let!(:country_to_be_retrieved) { FactoryGirl.create :country }
 
       context 'when the resource is found' do
         before :each do

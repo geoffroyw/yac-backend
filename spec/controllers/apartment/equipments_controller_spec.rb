@@ -3,6 +3,11 @@ require 'rails_helper'
 RSpec.describe Apartment::EquipmentsController, type: :controller do
 
   describe 'Equipments API' do
+    let(:token) { double :acceptable? => true }
+
+    before do
+      allow(controller).to receive_messages(:doorkeeper_token => token)
+    end
 
     describe '#index' do
       login_user
@@ -144,7 +149,7 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
           it 'responds with 204' do
             delete :destroy, {:id => equipment_to_be_deleted.id.to_s}
             expect(response.code).to eq('204')
-            expect {Apartment::Equipment.find equipment_to_be_deleted.id}.to raise_error ActiveRecord::RecordNotFound
+            expect { Apartment::Equipment.find equipment_to_be_deleted.id }.to raise_error ActiveRecord::RecordNotFound
           end
         end
 
