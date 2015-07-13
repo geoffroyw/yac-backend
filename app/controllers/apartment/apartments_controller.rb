@@ -2,13 +2,15 @@ class Apartment::ApartmentsController < ApplicationController
 
   include ActionController::Serialization
 
+  load_and_authorize_resource class: Apartment::Apartment
+
   rescue_from ActiveRecord::RecordNotFound do |e|
     render json: {error: 'Apartment does not exist'}, status: :not_found
   end
 
   def index
-    apartments = Apartment::Apartment.includes(:equipments).all
-    render json: apartments, each_serializer: Apartment::ApartmentSerializer
+    @apartments = @apartments.includes(:equipments).all
+    render json: @apartments, each_serializer: Apartment::ApartmentSerializer
   end
 
   def show

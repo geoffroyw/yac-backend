@@ -9,10 +9,17 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
     end
 
     describe '#index' do
-      login_user
+      before(:each) do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+        @user = FactoryGirl.create(:user)
+        @user.confirm
+        sign_in @user
+      end
       before :each do
         @expected_apartments = []
-        (0..3).each { @expected_apartments << FactoryGirl.create(:apartment_with_equipments) }
+        @unexpected_apartments = []
+        (0..3).each { @expected_apartments << FactoryGirl.create(:apartment_with_equipments, :organization => @user.organization) }
+        (0..3).each { @unexpected_apartments << FactoryGirl.create(:apartment_with_equipments, :organization => FactoryGirl.create(:organization)) }
         get :index, :format => :json
       end
 
@@ -20,7 +27,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         expect(response).to be_success
       end
 
-      it 'returns all the apartments in JSON' do
+      it 'returns all the apartments from the current_user organization in JSON' do
         body = JSON.parse(response.body)
         expect(body['apartments']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(@expected_apartments).to_json))
 
@@ -29,7 +36,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
 
     describe '#show' do
       login_user
-      let(:expected_apartment_with_equipments) { FactoryGirl.create :apartment_with_equipments }
+      let(:expected_apartment_with_equipments) { FactoryGirl.create :apartment_with_equipments, organization: @user.organization }
 
       context 'when the apartment is found' do
         before :each do
@@ -57,6 +64,14 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         it 'responds with 404' do
           get :show, {:id => 2}
           expect(response).to be_not_found
+        end
+      end
+
+      context 'when the apartment does not belongs to the user organization' do
+        let(:apartment) { FactoryGirl.create :apartment_with_equipments }
+        it 'responds with 403' do
+          get :show, {:id => apartment.id}
+          expect(response).to be_forbidden
         end
       end
     end
@@ -126,7 +141,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
       end
 
       context 'when the entity is found' do
-        let(:apartment_to_be_updated) { FactoryGirl.create :apartment }
+        let(:apartment_to_be_updated) { FactoryGirl.create :apartment, organization: @user.organization }
 
         context 'when the submitted parameters are not valid' do
           it 'responds with 400' do
@@ -156,7 +171,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
         end
 
         context 'when the equipment is updated' do
-          let(:apartment_to_be_updated) { FactoryGirl.create :apartment_with_equipments }
+          let(:apartment_to_be_updated) { FactoryGirl.create :apartment_with_equipments, organization: @user.organization }
           it 'responds with 200' do
             apartment_to_be_updated.name = 'NewName'
             put :update, {:id => apartment_to_be_updated.id.to_s,
@@ -186,6 +201,14 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
           end
         end
       end
+
+      context 'when the apartment does not belongs to the user organization' do
+        let(:apartment) { FactoryGirl.create :apartment_with_equipments }
+        it 'responds with 403' do
+          get :show, {:id => apartment.id}
+          expect(response).to be_forbidden
+        end
+      end
     end
 
     describe '#delete' do
@@ -198,7 +221,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
       end
 
       context 'when the entity is found' do
-        let(:apartment_to_be_deleted) { FactoryGirl.create :apartment }
+        let(:apartment_to_be_deleted) { FactoryGirl.create :apartment, organization: @user.organization }
 
         context 'when the entity is not deleted' do
           it 'responds with 204' do
@@ -207,13 +230,22 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
             expect { Apartment::Apartment.find apartment_to_be_deleted.id }.to raise_error ActiveRecord::RecordNotFound
           end
         end
+      end
 
-        context 'when the entity is already deleted' do
-          it 'responds with 404' do
-            apartment_to_be_deleted.delete
-            delete :destroy, {:id => apartment_to_be_deleted.id.to_s}
-            expect(response).to be_not_found
-          end
+      context 'when the entity is already deleted' do
+        let(:apartment_to_be_deleted) { FactoryGirl.create :apartment, organization: @user.organization }
+        it 'responds with 404' do
+          apartment_to_be_deleted.delete
+          delete :destroy, {:id => apartment_to_be_deleted.id.to_s}
+          expect(response).to be_not_found
+        end
+      end
+
+      context 'when the apartment does not belongs to the user organization' do
+        let(:apartment) { FactoryGirl.create :apartment }
+        it 'responds with 403' do
+          get :show, {:id => apartment.id}
+          expect(response).to be_forbidden
         end
       end
     end
