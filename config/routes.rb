@@ -76,4 +76,8 @@ Rails.application.routes.draw do
     resources :periods, only: [:index, :show, :create, :update]
     resources :prices, only: [:index, :show, :create, :update]
   end
+
+  scope module: 'user' do
+    resources :organizations, only: [:show, :create, :update]
+  end
 end
