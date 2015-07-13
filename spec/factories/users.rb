@@ -7,6 +7,10 @@ FactoryGirl.define do
     unconfirmed_email { Faker::Internet.email }
     factory :user do
       association :organization
+
+      factory :organization_admin_user do
+        association :own_organization, factory: :organization
+      end
     end
   end
 
