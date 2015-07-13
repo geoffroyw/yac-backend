@@ -1,6 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe Rental, type: :model do
+  describe 'it belongs to an organization' do
+    it { should belong_to :organization }
+  end
+
+  describe 'it validates presence of organization' do
+    it { should validate_presence_of :organization}
+  end
+
+  describe 'it belongs to an organization' do
+    it { should belong_to :organization }
+  end
   describe 'it belongs to customer' do
     it {should belong_to(:customer)}
   end

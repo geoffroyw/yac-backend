@@ -5,6 +5,7 @@ FactoryGirl.define do
     name Faker::Commerce.product_name
     capacity Faker::Number.number(2)
     description Faker::Lorem.paragraph
+    association :organization
 
     factory :apartment_with_equipments do
       transient do

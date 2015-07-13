@@ -7,5 +7,6 @@ FactoryGirl.define do
     email Faker::Internet.safe_email
     phone Faker::PhoneNumber.phone_number
     association :address, strategy: :build
+    association :organization
   end
 end

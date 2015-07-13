@@ -20,6 +20,7 @@ class Apartment::ApartmentsController < ApplicationController
 
   def create
     apartment = Apartment::Apartment.new apartment_params
+    apartment.organization = current_user.organization
     if apartment.save
       render json: apartment, serializer: Apartment::ApartmentSerializer, status: :created
     else

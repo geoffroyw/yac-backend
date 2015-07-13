@@ -1,7 +1,9 @@
 class Pricing::Period < ActiveRecord::Base
   has_many :prices
+  belongs_to :organization
 
   validates_presence_of :name
+  validates_presence_of :organization
   validate :end_date_cannot_be_before_start_date
 
   private

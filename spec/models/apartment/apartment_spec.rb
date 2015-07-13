@@ -35,6 +35,14 @@ RSpec.describe Apartment::Apartment, type: :model do
     it { should have_many(:prices).through(:apartment_prices) }
   end
 
+  describe 'it belongs to an organization' do
+    it { should belong_to :organization }
+  end
+
+  describe 'it validates presence of organization' do
+    it { should validate_presence_of :organization}
+  end
+
   context 'acts as paranoid' do
     it 'sets deleted_at on deletion' do
       apartment = FactoryGirl.create :apartment

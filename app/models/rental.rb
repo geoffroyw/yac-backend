@@ -2,6 +2,7 @@ class Rental < ActiveRecord::Base
   include AASM
 
   belongs_to :customer
+  belongs_to :organization
   belongs_to :apartment, :class_name => 'Apartment::Apartment'
 
   validates_presence_of :customer
@@ -9,6 +10,7 @@ class Rental < ActiveRecord::Base
   validates_presence_of :start_date
   validates_presence_of :end_date
   validates_presence_of :number_of_adult
+  validates_presence_of :organization
   validates_numericality_of :number_of_adult, :greater_than_or_equal_to => 1, :only_integer => true
   validates_numericality_of :number_of_children, :greater_than_or_equal_to => 0, :only_integer => true
 

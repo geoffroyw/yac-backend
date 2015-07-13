@@ -19,6 +19,7 @@ class Pricing::PeriodsController < ApplicationController
 
   def create
     period = Pricing::Period.new period_params
+    period.organization = current_user.organization
     if period.save
       render json: period, serializer: Pricing::PeriodSerializer, status: :created
     else

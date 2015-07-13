@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150713184238) do
+ActiveRecord::Schema.define(version: 20150713192053) do
 
   create_table "addresses", force: :cascade do |t|
     t.string   "address",     limit: 255, null: false
@@ -35,22 +35,27 @@ ActiveRecord::Schema.define(version: 20150713184238) do
   add_index "apartment_apartment_equipments", ["equipment_id"], name: "index_apartment_apartment_equipments_on_equipment_id", using: :btree
 
   create_table "apartment_apartments", force: :cascade do |t|
-    t.string   "name",        limit: 255,   null: false
-    t.integer  "capacity",    limit: 4,     null: false
-    t.text     "description", limit: 65535
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.string   "name",            limit: 255,   null: false
+    t.integer  "capacity",        limit: 4,     null: false
+    t.text     "description",     limit: 65535
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.datetime "deleted_at"
+    t.integer  "organization_id", limit: 4
   end
 
   add_index "apartment_apartments", ["deleted_at"], name: "index_apartment_apartments_on_deleted_at", using: :btree
+  add_index "apartment_apartments", ["organization_id"], name: "index_apartment_apartments_on_organization_id", using: :btree
 
   create_table "apartment_equipment", force: :cascade do |t|
-    t.string   "name",        limit: 255
-    t.text     "description", limit: 65535
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.string   "name",            limit: 255
+    t.text     "description",     limit: 65535
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "organization_id", limit: 4
   end
+
+  add_index "apartment_equipment", ["organization_id"], name: "index_apartment_equipment_on_organization_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
     t.string   "name",       limit: 255, null: false
@@ -60,13 +65,16 @@ ActiveRecord::Schema.define(version: 20150713184238) do
   end
 
   create_table "customers", force: :cascade do |t|
-    t.string   "first_name", limit: 255, null: false
-    t.string   "last_name",  limit: 255, null: false
-    t.string   "email",      limit: 255
-    t.string   "phone",      limit: 255
+    t.string   "first_name",      limit: 255, null: false
+    t.string   "last_name",       limit: 255, null: false
+    t.string   "email",           limit: 255
+    t.string   "phone",           limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "organization_id", limit: 4
   end
+
+  add_index "customers", ["organization_id"], name: "index_customers_on_organization_id", using: :btree
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", limit: 4,     null: false
@@ -130,10 +138,13 @@ ActiveRecord::Schema.define(version: 20150713184238) do
   create_table "pricing_periods", force: :cascade do |t|
     t.date     "start_date"
     t.date     "end_date"
-    t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name",            limit: 255
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.integer  "organization_id", limit: 4
   end
+
+  add_index "pricing_periods", ["organization_id"], name: "index_pricing_periods_on_organization_id", using: :btree
 
   create_table "pricing_prices", force: :cascade do |t|
     t.integer  "period_id",       limit: 4
@@ -142,8 +153,10 @@ ActiveRecord::Schema.define(version: 20150713184238) do
     t.datetime "updated_at",                                  null: false
     t.integer  "amount_cents",    limit: 4,   default: 0,     null: false
     t.string   "amount_currency", limit: 255, default: "EUR", null: false
+    t.integer  "organization_id", limit: 4
   end
 
+  add_index "pricing_prices", ["organization_id"], name: "index_pricing_prices_on_organization_id", using: :btree
   add_index "pricing_prices", ["period_id"], name: "index_pricing_prices_on_period_id", using: :btree
 
   create_table "rentals", force: :cascade do |t|
@@ -156,11 +169,13 @@ ActiveRecord::Schema.define(version: 20150713184238) do
     t.string   "state",              limit: 255
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
+    t.integer  "organization_id",    limit: 4
   end
 
   add_index "rentals", ["apartment_id"], name: "index_rentals_on_apartment_id", using: :btree
   add_index "rentals", ["customer_id"], name: "index_rentals_on_customer_id", using: :btree
   add_index "rentals", ["end_date"], name: "index_rentals_on_end_date", using: :btree
+  add_index "rentals", ["organization_id"], name: "index_rentals_on_organization_id", using: :btree
   add_index "rentals", ["start_date"], name: "index_rentals_on_start_date", using: :btree
 
   create_table "users", force: :cascade do |t|

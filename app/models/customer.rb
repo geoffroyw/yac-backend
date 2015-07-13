@@ -14,9 +14,11 @@
 class Customer < ActiveRecord::Base
   has_one :address, :inverse_of => :customer
   has_many :rentals
+  belongs_to :organization
 
   validates_presence_of :first_name
   validates_presence_of :last_name
+  validates_presence_of :organization
 
   accepts_nested_attributes_for :address
 end

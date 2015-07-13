@@ -3,6 +3,7 @@ FactoryGirl.define do
     start_date Faker::Date.between(Date.today, Date.today+4.days)
     end_date Faker::Date.between(Date.today+5.days, Date.today+40.days)
     name Faker::Commerce.product_name
+    association :organization
   end
 
 end

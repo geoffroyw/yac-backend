@@ -19,6 +19,7 @@ class RentalsController < ApplicationController
 
   def create
     rental = Rental.new rental_params
+    rental.organization = current_user.organization
     if rental.save
       render json: rental, serializer: RentalSerializer, status: :created
     else

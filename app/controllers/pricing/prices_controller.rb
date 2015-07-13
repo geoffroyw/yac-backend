@@ -19,6 +19,7 @@ class Pricing::PricesController < ApplicationController
 
   def create
     price = Pricing::Price.new price_params
+    price.organization = current_user.organization
     if price.save
       render json: price, serializer: Pricing::PriceSerializer, status: :created
     else

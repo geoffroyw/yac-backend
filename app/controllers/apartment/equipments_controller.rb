@@ -19,6 +19,7 @@ class Apartment::EquipmentsController < ApplicationController
 
   def create
     equipment = Apartment::Equipment.new equipment_params
+    equipment.organization = current_user.organization
     if equipment.save
       render json: equipment, serializer: Apartment::EquipmentSerializer, status: :created
     else

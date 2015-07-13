@@ -20,6 +20,7 @@ class CustomersController < ActionController::API
 
   def create
     customer = Customer.new customer_params
+    customer.organization = current_user.organization
     if customer.save
       render json: customer, serializer: CustomerSerializer, status: :created
     else

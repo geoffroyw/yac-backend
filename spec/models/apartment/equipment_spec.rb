@@ -13,4 +13,11 @@ RSpec.describe Apartment::Equipment, type: :model do
     it { should validate_presence_of :name }
   end
 
+  describe 'it belongs to an organization' do
+    it { should belong_to :organization }
+  end
+
+  describe 'it validates presence of organization' do
+    it { should validate_presence_of :organization}
+  end
 end
