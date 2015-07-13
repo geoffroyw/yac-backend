@@ -5,5 +5,8 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable,
          :confirmable, :lockable
 
+  belongs_to :organization
+  has_one :own_organization, class_name: 'Organization', foreign_key: 'admin_id'
+
   validates_presence_of :username
 end
