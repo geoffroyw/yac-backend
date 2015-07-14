@@ -1,19 +1,19 @@
 class RentalsController < ApplicationController
   include ActionController::Serialization
 
+  load_and_authorize_resource class: Rental
+
   rescue_from ActiveRecord::RecordNotFound do |e|
     render json: {error: 'Rental does not exist'}, status: :not_found
   end
   
   def index
-    rentals = Rental.all
-    render json: rentals, each_serializer: RentalSerializer
+    render json: @rentals, each_serializer: RentalSerializer
   end
 
   def show
-    rental = Rental.find params[:id]
-    if stale?(rental, ast_modified: rental.updated_at)
-      render json: rental, serializer: RentalSerializer
+    if stale?(@rental, ast_modified: @rental.updated_at)
+      render json: @rental, serializer: RentalSerializer
     end
   end
 
@@ -28,26 +28,23 @@ class RentalsController < ApplicationController
   end
 
   def update
-    rental = Rental.find params[:id]
-    if rental.update rental_params
-      render json: rental, serializer: RentalSerializer, status: :ok
+    if @rental.update rental_params
+      render json: @rental, serializer: RentalSerializer, status: :ok
     else
-      render json: {errors: rental.errors}, status: :bad_request
+      render json: {errors: @rental.errors}, status: :bad_request
     end
   end
 
   def confirm
-    rental = Rental.find params[:id]
-    rental.confirm!
-    render json: rental, serializer: RentalSerializer, status: :ok
+    @rental.confirm!
+    render json: @rental, serializer: RentalSerializer, status: :ok
   rescue AASM::InvalidTransition
     render json: {error: 'Rental can not be confirmed'}, status: :bad_request
   end
 
   def cancel
-    rental = Rental.find params[:id]
-    rental.cancel!
-    render json: rental, serializer: RentalSerializer, status: :ok
+    @rental.cancel!
+    render json: @rental, serializer: RentalSerializer, status: :ok
   rescue AASM::InvalidTransition
     render json: {error: 'Rental can not be canceled'}, status: :bad_request
   end

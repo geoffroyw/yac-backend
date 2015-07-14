@@ -28,7 +28,7 @@ RSpec.describe RentalsController, type: :controller do
 
     describe '#show' do
       login_user
-      let(:expected_rental) { FactoryGirl.create :with_customer_and_apartment }
+      let(:expected_rental) { FactoryGirl.create :with_customer_and_apartment, organization: @user.organization }
 
       context 'when the rental is found' do
         before :each do
@@ -57,6 +57,14 @@ RSpec.describe RentalsController, type: :controller do
         it 'responds with 404' do
           get :show, {:id => 2}
           expect(response).to be_not_found
+        end
+      end
+
+      context 'when the rental does not belongs to the user organization' do
+        let(:rental) { FactoryGirl.create :with_customer_and_apartment }
+        it 'responds with 403' do
+          get :show, {:id => rental.id}
+          expect(response).to be_forbidden
         end
       end
     end
@@ -93,6 +101,7 @@ RSpec.describe RentalsController, type: :controller do
           expect(created_rental.end_date).to eq(submitted_rental.end_date)
           expect(created_rental.number_of_adult).to eq(submitted_rental.number_of_adult)
           expect(created_rental.number_of_children).to eq(submitted_rental.number_of_children)
+          expect(created_rental.organization).to eq(@user.organization)
         end
       end
     end
@@ -106,8 +115,16 @@ RSpec.describe RentalsController, type: :controller do
         end
       end
 
+      context 'when the rental does not belongs to the user organization' do
+        let(:rental) { FactoryGirl.create :with_customer_and_apartment }
+        it 'responds with 403' do
+          put :update, {:id => rental.id, :rental => rental.attributes}
+          expect(response).to be_forbidden
+        end
+      end
+
       context 'when the entity is found' do
-        let(:rental_to_be_updated) { FactoryGirl.create :with_customer_and_apartment }
+        let(:rental_to_be_updated) { FactoryGirl.create :with_customer_and_apartment, organization: @user.organization }
 
         context 'when the submitted parameters are not valid' do
           it 'responds with 400' do
@@ -150,8 +167,16 @@ RSpec.describe RentalsController, type: :controller do
         end
       end
 
+      context 'when the rental does not belongs to the user organization' do
+        let(:rental) { FactoryGirl.create :with_customer_and_apartment }
+        it 'responds with 403' do
+          put :confirm, {:id => rental.id}
+          expect(response).to be_forbidden
+        end
+      end
+
       context 'when the entity is found' do
-        let(:rental_to_be_confirmed) { FactoryGirl.create :with_customer_and_apartment }
+        let(:rental_to_be_confirmed) { FactoryGirl.create :with_customer_and_apartment, organization: @user.organization }
 
         context 'when the rental can not be confirmed' do
           it 'responds with 400' do
@@ -186,8 +211,16 @@ RSpec.describe RentalsController, type: :controller do
         end
       end
 
+      context 'when the rental does not belongs to the user organization' do
+        let(:rental) { FactoryGirl.create :with_customer_and_apartment }
+        it 'responds with 403' do
+          put :cancel, {:id => rental.id}
+          expect(response).to be_forbidden
+        end
+      end
+
       context 'when the entity is found' do
-        let(:rental_to_be_canceled) { FactoryGirl.create :with_customer_and_apartment }
+        let(:rental_to_be_canceled) { FactoryGirl.create :with_customer_and_apartment, organization: @user.organization }
 
         context 'when the rental can not be canceled' do
           it 'responds with 400' do
