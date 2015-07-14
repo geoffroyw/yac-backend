@@ -29,7 +29,7 @@ RSpec.describe Apartment::ApartmentsController, type: :controller do
 
       it 'returns all the apartments from the current_user organization in JSON' do
         body = JSON.parse(response.body)
-        expect(body['apartments']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(@expected_apartments).to_json))
+        expect(body['apartments']).to eq(JSON.parse(ActiveModel::ArraySerializer.new(@expected_apartments).to_json))
 
       end
     end

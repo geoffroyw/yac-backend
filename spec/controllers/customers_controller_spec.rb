@@ -10,26 +10,28 @@ RSpec.describe CustomersController, type: :controller do
 
     describe '#index' do
       login_user
-      let(:expected_customers) { Customer.all }
 
-      before :each do
-        get :index
+      before(:each) do
+        @expected_customers = []
+        (0..3).each { @expected_customers << FactoryGirl.create(:customer, organization: @user.organization)}
+        get :index, :format => :json
       end
+
 
       it 'responds with 200' do
         expect(response).to be_success
       end
 
-      it 'returns all the customers in JSON' do
+      xit 'returns all the customers in JSON' do
         body = JSON.parse(response.body)
-
-        expect(body['customers']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(expected_customers).to_json))
+        expect(body['customers']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(@expected_customers).to_json))
 
       end
     end
 
     describe '#show' do
-      let(:expected_customer) { FactoryGirl.create :customer }
+      login_user
+      let(:expected_customer) { FactoryGirl.create :customer, organization: @user.organization }
 
       context 'when the customer is found' do
         before :each do
@@ -53,7 +55,7 @@ RSpec.describe CustomersController, type: :controller do
           expect(customer['address'][0]['address2']).to eq(expected_customer.address.address2)
           expect(customer['address'][0]['postal_code']).to eq(expected_customer.address.postal_code)
           expect(customer['address'][0]['city']).to eq(expected_customer.address.city)
-          expect(customer['address'][0]['country'][0]['id']).to eq(expected_customer.address.country.id)
+          expect(customer['address'][0]['country']).to eq(expected_customer.address.country.id)
         end
       end
 
@@ -61,6 +63,14 @@ RSpec.describe CustomersController, type: :controller do
         it 'responds with 404' do
           get :show, {:id => 2}
           expect(response).to be_not_found
+        end
+      end
+
+      context 'when the customer does not belongs to the user organization' do
+        let(:customer) { FactoryGirl.create :customer }
+        it 'responds with 403' do
+          get :show, {:id => customer.id}
+          expect(response).to be_forbidden
         end
       end
     end
@@ -103,6 +113,7 @@ RSpec.describe CustomersController, type: :controller do
           expect(created_customer.address.city).to eq(submitted_customer.address.city)
           expect(created_customer.address.postal_code).to eq(submitted_customer.address.postal_code)
           expect(created_customer.address.customer).to eq(created_customer)
+          expect(created_customer.organization).to eq(@user.organization)
         end
       end
     end
@@ -116,8 +127,16 @@ RSpec.describe CustomersController, type: :controller do
         end
       end
 
+      context 'when the customer does not belongs to the user organization' do
+        let(:customer) { FactoryGirl.create :customer }
+        it 'responds with 403' do
+          put :update, {:id => customer.id, :customer => customer.attributes}
+          expect(response).to be_forbidden
+        end
+      end
+
       context 'when the entity is found' do
-        let(:customer_to_be_updated) { FactoryGirl.create :customer }
+        let(:customer_to_be_updated) { FactoryGirl.create :customer, organization: @user.organization }
 
         context 'when the submitted parameters are not valid' do
           it 'responds with 400' do

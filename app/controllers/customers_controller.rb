@@ -1,19 +1,23 @@
-class CustomersController < ActionController::API
+class CustomersController < ApplicationController
   include ActionController::Serialization
+
+  before_filter :fetch_address_with_customer, :only => :show
+
+
+  load_and_authorize_resource class: Customer
 
   rescue_from ActiveRecord::RecordNotFound do |e|
     render json: {error: 'Customer does not exist'}, status: :not_found
   end
 
   def index
-    customers = Customer.includes(:address).all
-    render json: customers, each_serializer: CustomerSerializer
+    @customers = @customers.includes(:address).all
+    render json: @customers, each_serializer: CustomerSerializer
   end
 
   def show
-    customer = Customer.includes(:address).find params[:id]
-    if stale?(customer, ast_modified: customer.updated_at)
-      render json: customer, serializer: CustomerSerializer
+    if stale?(@customer, ast_modified: @customer.updated_at)
+      render json: @customer, serializer: CustomerSerializer
     end
   end
 
@@ -29,11 +33,10 @@ class CustomersController < ActionController::API
   end
 
   def update
-    customer = Customer.find params[:id]
-    if customer.update customer_params
-      render json: customer, serializer: CustomerSerializer, status: :ok
+    if @customer.update customer_params
+      render json: @customer, serializer: CustomerSerializer, status: :ok
     else
-      render json: {errors: customer.errors}, status: :bad_request
+      render json: {errors: @customer.errors}, status: :bad_request
     end
   end
 
@@ -44,5 +47,9 @@ class CustomersController < ActionController::API
         .permit(:first_name, :last_name, :email, :phone,
                 address_attributes: [:customer_id, :address, :address2, :postal_code, :city, :country_id]
         )
+  end
+
+  def fetch_address_with_customer
+    @customer = Customer.includes(:address).find(params[:id])
   end
 end
