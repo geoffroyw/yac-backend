@@ -12,7 +12,7 @@ RSpec.describe Pricing::PricesController, type: :controller do
       login_user
       before :each do
         @expected_prices = []
-        (0..3).each { @expected_prices << FactoryGirl.create(:price) }
+        (0..3).each { @expected_prices << FactoryGirl.create(:price, organization: @user.organization) }
         get :index
       end
 
@@ -20,7 +20,7 @@ RSpec.describe Pricing::PricesController, type: :controller do
         expect(response).to be_success
       end
 
-      it 'returns all the apartments in JSON' do
+      it 'returns all the prices in JSON' do
         body = JSON.parse(response.body)
 
         expect(body['prices']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(@expected_prices).to_json))
@@ -29,7 +29,7 @@ RSpec.describe Pricing::PricesController, type: :controller do
 
     describe '#show' do
       login_user
-      let(:expected_price) { FactoryGirl.create :price }
+      let(:expected_price) { FactoryGirl.create :price, organization: @user.organization }
 
       context 'when the price is found' do
         before :each do
@@ -59,6 +59,14 @@ RSpec.describe Pricing::PricesController, type: :controller do
         it 'responds with 404' do
           get :show, {:id => 2}
           expect(response).to be_not_found
+        end
+      end
+
+      context 'when the price does not belongs to the user organization' do
+        let(:price) { FactoryGirl.create :price }
+        it 'responds with 403' do
+          get :show, {:id => price.id}
+          expect(response).to be_forbidden
         end
       end
     end
@@ -91,6 +99,7 @@ RSpec.describe Pricing::PricesController, type: :controller do
           expect(created_price.number_of_night).to eq(submitted_price.number_of_night)
           expect(created_price.amount_cents).to eq(submitted_price.amount_cents)
           expect(created_price.period.id).to eq(submitted_price.period.id)
+          expect(created_price.organization).to eq(@user.organization)
         end
       end
     end
@@ -104,8 +113,16 @@ RSpec.describe Pricing::PricesController, type: :controller do
         end
       end
 
+      context 'when the price does not belongs to the user organization' do
+        let(:price) { FactoryGirl.create :price }
+        it 'responds with 403' do
+          put :update, {:id => price.id.to_s, :price => price.attributes}
+          expect(response).to be_forbidden
+        end
+      end
+
       context 'when the entity is found' do
-        let(:price_to_be_updated) { FactoryGirl.create :price }
+        let(:price_to_be_updated) { FactoryGirl.create :price, organization: @user.organization }
 
         context 'when the submitted parameters are not valid' do
           it 'responds with 400' do

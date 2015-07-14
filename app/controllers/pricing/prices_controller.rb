@@ -1,19 +1,20 @@
 class Pricing::PricesController < ApplicationController
   include ActionController::Serialization
 
+  load_and_authorize_resource class: Pricing::Price
+
+
   rescue_from ActiveRecord::RecordNotFound do |e|
     render json: {error: 'Price does not exist'}, status: :not_found
   end
 
   def index
-    prices = Pricing::Price.all
-    render json: prices, each_serializer: Pricing::PriceSerializer
+    render json: @prices, each_serializer: Pricing::PriceSerializer
   end
 
   def show
-    price = Pricing::Price.find params[:id]
-    if stale?(price, last_modified: price.updated_at)
-      render json: price, serializer: Pricing::PriceSerializer
+    if stale?(@price, last_modified: @price.updated_at)
+      render json: @price, serializer: Pricing::PriceSerializer
     end
   end
 
@@ -28,11 +29,10 @@ class Pricing::PricesController < ApplicationController
   end
 
   def update
-    price = Pricing::Price.find params[:id]
-    if price.update price_params
-      render json: price, serializer: Pricing::PriceSerializer, status: :ok
+    if @price.update price_params
+      render json: @price, serializer: Pricing::PriceSerializer, status: :ok
     else
-      render json: {errors: price.errors}, status: :bad_request
+      render json: {errors: @price.errors}, status: :bad_request
     end
   end
 
