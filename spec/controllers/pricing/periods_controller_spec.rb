@@ -14,7 +14,7 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
       login_user
       before :each do
         @expected_periods = []
-        (0..3).each { @expected_periods << FactoryGirl.create(:period) }
+        (0..3).each { @expected_periods << FactoryGirl.create(:period, organization: @user.organization) }
         get :index
       end
 
@@ -22,7 +22,7 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
         expect(response).to be_success
       end
 
-      it 'returns all the apartments in JSON' do
+      it 'returns all the periods in JSON' do
         body = JSON.parse(response.body)
         expect(body['periods']).to match_array(JSON.parse(ActiveModel::ArraySerializer.new(@expected_periods).to_json))
       end
@@ -30,7 +30,7 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
 
     describe '#show' do
       login_user
-      let(:expected_period) { FactoryGirl.create :period }
+      let(:expected_period) { FactoryGirl.create :period, organization: @user.organization }
 
       context 'when the period is found' do
         before :each do
@@ -58,6 +58,14 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
           expect(response).to be_not_found
         end
       end
+
+      context 'when the period does not belongs to the user organization' do
+        let(:period) { FactoryGirl.create :period }
+        it 'responds with 403' do
+          get :show, {:id => period.id}
+          expect(response).to be_forbidden
+        end
+      end
     end
 
     describe '#create' do
@@ -80,7 +88,7 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
           expect(response).to be_created
         end
 
-        it 'creates an apartment with the given attributes values' do
+        it 'creates an period with the given attributes values' do
           id = JSON.parse(response.body)['period']['id']
 
 
@@ -88,6 +96,7 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
           expect(created_period.name).to eq(submitted_period.name)
           expect(created_period.start_date).to eq(submitted_period.start_date)
           expect(created_period.end_date).to eq(submitted_period.end_date)
+          expect(created_period.organization).to eq(@user.organization)
         end
       end
     end
@@ -101,8 +110,16 @@ RSpec.describe Pricing::PeriodsController, type: :controller do
         end
       end
 
+      context 'when the period does not belongs to the user organization' do
+        let(:period) { FactoryGirl.create :period }
+        it 'responds with 403' do
+          put :update, {:id => period.id.to_s, :period => period.attributes}
+          expect(response).to be_forbidden
+        end
+      end
+
       context 'when the entity is found' do
-        let(:period_to_be_updated) { FactoryGirl.create :period }
+        let(:period_to_be_updated) { FactoryGirl.create :period, organization: @user.organization }
 
         context 'when the submitted parameters are not valid' do
           it 'responds with 400' do

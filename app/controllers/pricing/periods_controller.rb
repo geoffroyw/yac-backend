@@ -1,19 +1,19 @@
 class Pricing::PeriodsController < ApplicationController
   include ActionController::Serialization
 
+  load_and_authorize_resource class: Pricing::Period
+
   rescue_from ActiveRecord::RecordNotFound do |e|
     render json: {error: 'Period does not exist'}, status: :not_found
   end
 
   def index
-    periods = Pricing::Period.all
-    render json: periods, each_serializer: Pricing::PeriodSerializer
+    render json: @periods, each_serializer: Pricing::PeriodSerializer
   end
 
   def show
-    period = Pricing::Period.find params[:id]
-    if stale?(period, last_modified: period.updated_at)
-      render json: period, serializer: Pricing::PeriodSerializer
+    if stale?(@period, last_modified: @period.updated_at)
+      render json: @period, serializer: Pricing::PeriodSerializer
     end
   end
 
@@ -28,11 +28,10 @@ class Pricing::PeriodsController < ApplicationController
   end
 
   def update
-    period = Pricing::Period.find params[:id]
-    if period.update period_params
-      render json: period, serializer: Pricing::PeriodSerializer, status: :ok
+    if @period.update period_params
+      render json: @period, serializer: Pricing::PeriodSerializer, status: :ok
     else
-      render json: {errors: period.errors}, status: :bad_request
+      render json: {errors: @period.errors}, status: :bad_request
     end
   end
 
