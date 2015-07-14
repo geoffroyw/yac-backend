@@ -1,14 +1,15 @@
 class User::OrganizationsController < ApplicationController
   include ActionController::Serialization
 
+  load_and_authorize_resource class: User::Organization
+
   rescue_from ActiveRecord::RecordNotFound do |e|
     render json: {error: 'Organization does not exist'}, status: :not_found
   end
 
   def show
-    organization = Organization.find params[:id]
-    if stale?(organization, last_modified: organization.updated_at)
-      render json: organization, serializer: OrganizationSerializer
+    if stale?(@organization, last_modified: @organization.updated_at)
+      render json: @organization, serializer: OrganizationSerializer
     end
   end
 
@@ -24,11 +25,10 @@ class User::OrganizationsController < ApplicationController
   end
 
   def update
-    organization = Organization.find params[:id]
-    if organization.update organization_params
-      render json: organization, serializer: OrganizationSerializer, status: :ok
+    if @organization.update organization_params
+      render json: @organization, serializer: OrganizationSerializer, status: :ok
     else
-      render json: {errors: organization.errors}, status: :bad_request
+      render json: {errors: @organization.errors}, status: :bad_request
     end
   end
 

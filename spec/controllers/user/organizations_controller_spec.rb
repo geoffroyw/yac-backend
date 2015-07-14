@@ -10,7 +10,7 @@ RSpec.describe User::OrganizationsController, type: :controller do
 
     describe '#show' do
       login_user
-      let(:expected_oragnization) { FactoryGirl.create :organization }
+      let(:expected_oragnization) { @user.organization }
 
       context 'when the organization is found' do
         before :each do
@@ -35,6 +35,14 @@ RSpec.describe User::OrganizationsController, type: :controller do
         it 'responds with 404' do
           get :show, {:id => 2}
           expect(response).to be_not_found
+        end
+      end
+
+      context 'when the organization is not user organization' do
+        let(:organization) { FactoryGirl.create :organization }
+        it 'responds with 403' do
+          get :show, {:id => organization.id}
+          expect(response).to be_forbidden
         end
       end
     end
@@ -79,16 +87,29 @@ RSpec.describe User::OrganizationsController, type: :controller do
     end
 
     describe '#update' do
-      login_user
+      before(:each) do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+        @user = FactoryGirl.create(:organization_admin_user)
+        @user.confirm
+        sign_in @user
+      end
       context 'when the entity does not exists' do
         it 'responds with 404' do
-          put :update, {:id => 4.to_s, :organization => FactoryGirl.attributes_for(:organization)}
+          put :update, {:id => 4.to_s, :organization => @user.own_organization.attributes}
           expect(response).to be_not_found
         end
       end
 
+      context 'when the organization is not user organization' do
+        let(:organization) { FactoryGirl.create :organization }
+        it 'responds with 403' do
+          get :show, {:id => organization.id, :organization => organization.attributes}
+          expect(response).to be_forbidden
+        end
+      end
+
       context 'when the entity is found' do
-        let(:organization_to_be_updated) { FactoryGirl.create :organization }
+        let(:organization_to_be_updated) { @user.own_organization }
 
         context 'when the submitted parameters are not valid' do
           it 'responds with 400' do
