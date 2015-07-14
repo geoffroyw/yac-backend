@@ -13,7 +13,7 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
       login_user
       before :each do
         @expected_equipments = []
-        (0..3).each { @expected_equipments << FactoryGirl.create(:equipment) }
+        (0..3).each { @expected_equipments << FactoryGirl.create(:equipment, :organization => @user.organization) }
         get :index
       end
 
@@ -31,9 +31,9 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
 
     describe '#show' do
       login_user
-      let(:expected_equipment) { FactoryGirl.create :equipment }
+      let(:expected_equipment) { FactoryGirl.create :equipment, :organization => @user.organization }
 
-      context 'when the apartment is found' do
+      context 'when the equipment is found' do
         before :each do
           get :show, {:id => expected_equipment.id}
         end
@@ -42,20 +42,28 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
           expect(response).to be_success
         end
 
-        it 'returns the apartment in JSON' do
+        it 'returns the equipment in JSON' do
           body = JSON.parse(response.body)
-          apartment = body['equipment']
+          equipment = body['equipment']
 
-          expect(apartment['id']).to eq(expected_equipment.id)
-          expect(apartment['name']).to eq(expected_equipment.name)
-          expect(apartment['description']).to eq(expected_equipment.description)
+          expect(equipment['id']).to eq(expected_equipment.id)
+          expect(equipment['name']).to eq(expected_equipment.name)
+          expect(equipment['description']).to eq(expected_equipment.description)
         end
       end
 
-      context 'when the apartment is not found' do
+      context 'when the equipment is not found' do
         it 'responds with 404' do
           get :show, {:id => 2}
           expect(response).to be_not_found
+        end
+      end
+
+      context 'when the equipment does not belongs to the user organization' do
+        let(:equipment) { FactoryGirl.create :equipment }
+        it 'responds with 403' do
+          get :show, {:id => equipment.id}
+          expect(response).to be_forbidden
         end
       end
     end
@@ -80,13 +88,14 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
           expect(response).to be_created
         end
 
-        it 'creates an apartment with the given attributes values' do
+        it 'creates an equipment with the given attributes values' do
           id = JSON.parse(response.body)['equipment']['id']
 
 
           created_equipment = Apartment::Equipment.find id
           expect(created_equipment.name).to eq(submitted_equipment.name)
           expect(created_equipment.description).to eq(submitted_equipment.description)
+          expect(created_equipment.organization).to eq(@user.organization)
 
         end
       end
@@ -101,8 +110,17 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
         end
       end
 
+      context 'when the entity does not belongs to the user organization' do
+        let(:equipment) { FactoryGirl.create :equipment }
+        it 'responds with 403' do
+          put :update, {:id => equipment.id.to_s,
+                        :equipment => equipment.attributes}
+          expect(response).to be_forbidden
+        end
+      end
+
       context 'when the entity is found' do
-        let(:equipment_to_be_updated) { FactoryGirl.create :equipment }
+        let(:equipment_to_be_updated) { FactoryGirl.create :equipment, :organization => @user.organization }
 
         context 'when the submitted parameters are not valid' do
           it 'responds with 400' do
@@ -142,8 +160,16 @@ RSpec.describe Apartment::EquipmentsController, type: :controller do
         end
       end
 
+      context 'when the entity does not belongs to the user organization' do
+        let(:equipment) { FactoryGirl.create :equipment }
+        it 'responds with 403' do
+          delete :destroy, {:id => equipment.id.to_s}
+          expect(response).to be_forbidden
+        end
+      end
+
       context 'when the entity is found' do
-        let(:equipment_to_be_deleted) { FactoryGirl.create :equipment }
+        let(:equipment_to_be_deleted) { FactoryGirl.create :equipment, :organization => @user.organization }
 
         context 'when the entity is not deleted' do
           it 'responds with 204' do
