@@ -82,6 +82,7 @@ RSpec.describe RentalsController, type: :controller do
         let(:submitted_rental) { FactoryGirl.build(:with_customer_and_apartment) }
 
         before :each do
+          allow(Publisher).to receive(:publish_booking_request)
           post :create, {:rental => submitted_rental.attributes.merge(customer: submitted_rental.customer.id).merge(apartment: submitted_rental.apartment.id)}
         end
 
@@ -104,6 +105,7 @@ RSpec.describe RentalsController, type: :controller do
           expect(created_rental.organization).to eq(@user.organization)
         end
       end
+
     end
 
     describe '#update' do

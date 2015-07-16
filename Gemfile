@@ -21,10 +21,13 @@ gem 'devise', '~> 3.5'
 gem 'doorkeeper', '~> 2.2'
 gem 'cancancan', '~> 1.12'
 
+gem 'bunny', '~> 1.7'
+
 group :test do
   gem 'rspec-core', '~>3.2'
   gem 'rspec-expectations', '~>3.2'
   gem 'shoulda-matchers', '~>2.8', require: false
+  gem 'rspec-mocks', '~> 3.3'
 end
 
 group :development, :test do

@@ -21,6 +21,7 @@ class RentalsController < ApplicationController
     rental = Rental.new rental_params
     rental.organization = current_user.organization
     if rental.save
+      Publisher.publish_booking_request rental.to_json
       render json: rental, serializer: RentalSerializer, status: :created
     else
       render json: {errors: rental.errors}, status: :bad_request
