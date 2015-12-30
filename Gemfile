@@ -7,21 +7,21 @@ gem 'rails-api', '~>0.4'
 
 gem 'spring', :group => :development
 
-gem 'mysql2', '~>0.3'
+gem 'mysql2', '~>0.4'
 
 gem 'active_model_serializers', '~>0.9'
 
 gem 'paranoia', '~> 2.0'
 
-gem 'aasm', '~> 4.2'
+gem 'aasm', '~> 4.5'
 
 gem 'money-rails', '~> 1.4'
 
 gem 'devise', '~> 3.5'
-gem 'doorkeeper', '~> 2.2'
-gem 'cancancan', '~> 1.12'
+gem 'doorkeeper', '~> 3.1'
+gem 'cancancan', '~> 1.13'
 
-gem 'bunny', '~> 1.7'
+gem 'bunny', '~> 2.2'
 
 group :test do
   gem 'rspec-core', '~>3.2'
